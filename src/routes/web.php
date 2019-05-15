@@ -1,10 +1,7 @@
 <?php
 
-Route::group(['namespace' => 'Dorcas\ModulesDashboardBusiness\Http\Controllers', 'middleware' => ['web']], function() {
-    Route::get('sales', 'ModulesDashboardBusinessController@index')->name('sales');
+Route::group(['namespace' => 'Dorcas\ModulesDashboardBusiness\Http\Controllers', 'middleware' => ['web','auth']], function() {
+	Route::get('dashboard-business', 'ModulesDashboardBusinessController@business')->name('dashboard-business');
 });
-
-
-Route::get('/home', 'HomeController@index')->name('home');
 
 ?>
