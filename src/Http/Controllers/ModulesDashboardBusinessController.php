@@ -160,19 +160,21 @@ class ModulesDashboardBusinessController extends Controller {
             $salesGraphColumns = [];
             $salesGraphColors = new \stdClass();
             $salesGraphNames = new \stdClass();
+            $salesGraphAxes = new \stdClass();
             $salesGraphCategories = [];
 
-            $salesGraphOld = array_slice($this->data['salesGraph'], 15); //reduce to 2 weeks
+            $salesGraphOld = array_slice($this->data['salesGraph'], 14); //reduce to 2 weeks
             //the fields we are plotting for
             $salesGraphSeries = [
-                "count" => ["title" => "Orders", "color" => "#467fcf"],
-                "total" => ["title" => "Sales", "color" => "#5eba00"]
+                "count" => ["title" => "Orders", "color" => "#467fcf", "axes" => "y"],
+                "total" => ["title" => "Sales", "color" => "#5eba00", "axes" => "y2"]
             ];
 
             foreach ($salesGraphSeries as $skey => $svalue) {
                 $column = [$skey];
                 $salesGraphColors->{$skey} = $svalue["color"];
                 $salesGraphNames->{$skey} = $svalue["title"];
+                $salesGraphAxes->{$skey} = $svalue["axes"];
                 foreach ($salesGraphOld as $okey => $ovalue) {
                     $column[] = $ovalue[$skey];
                 }
@@ -188,6 +190,7 @@ class ModulesDashboardBusinessController extends Controller {
                 "columns" => $salesGraphColumns,
                 "colors" => $salesGraphColors,
                 "names" => $salesGraphNames,
+                "axes" => $salesGraphAxes,
                 "categories" => $salesGraphCategories
             ];
 

@@ -264,6 +264,21 @@
         }*/
         @if (!empty($salesGraph))
 
+			function ordinal_suffix_of(i) {
+			    var j = i % 10,
+			        k = i % 100;
+			    if (j == 1 && k != 11) {
+			        return i + "st";
+			    }
+			    if (j == 2 && k != 12) {
+			        return i + "nd";
+			    }
+			    if (j == 3 && k != 13) {
+			        return i + "rd";
+			    }
+			    return i + "th";
+			}
+
             $(function() {
                 c3.generate({
                     bindto: '#chart-sales-graph', // id of chart wrapper
@@ -272,13 +287,35 @@
                     	type: 'line',
                     	colors: {!! json_encode($salesGraph["colors"]) !!},
                     	names: {!! json_encode($salesGraph["names"]) !!},
+                    	axes: {!! json_encode($salesGraph["axes"]) !!},
                     },
                     axis: {
                         x: {
                             type: 'category',
                             categories: {!! json_encode($salesGraph["categories"]) !!}
+                        },
+                        y: {
+                        	tick: {
+                        		format: d3.format(",")
+                        	}
+                        },
+                        y2: {
+                            show: true,
+                        	tick: {
+                        		format: d3.format(",")
+                        	}
                         }
                     },
+				    tooltip: {
+				        format: {
+				            title: function (d) { return 'Activity on ' + ordinal_suffix_of(d); },
+				            value: function (value, ratio, id) {
+				                var format = id === 'total' ? d3.format(',') : d3.format(',');
+				                return format(value);
+				            }
+				//            value: d3.format(',') // apply this format to both y and y2
+				        }
+				    },
                     legend: {
                         position: 'inset',
                         padding: 0,
