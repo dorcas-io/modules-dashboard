@@ -1,10 +1,10 @@
 <?php
 
-namespace Dorcas\ModulesDashboardBusiness\Http\Controllers;
+namespace Dorcas\ModulesDashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Dorcas\ModulesDashboardBusinessController\Models\ModulesDashboardBusiness;
+use Dorcas\ModulesDashboardController\Models\ModulesDashboard;
 use App\Dorcas\Hub\Utilities\UiResponse\UiResponse;
 use Carbon\Carbon;
 use App\Http\Controllers\HomeController;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
 
-class ModulesDashboardBusinessController extends Controller {
+class ModulesDashboardController extends Controller {
 
     const SUMMARY_ICONS = [
         'cash' => ['icon' => 'fa fa-money', 'bg' => 'bg-green'],
@@ -49,9 +49,9 @@ class ModulesDashboardBusinessController extends Controller {
         $this->middleware( 'auth');
         parent::__construct();
         $this->data = [
-            'page' => ['title' => config('modules-dashboard-business.title')],
-            'header' => ['title' => config('modules-dashboard-business.title')],
-            'selectedMenu' => 'modules-dashboard-business'
+            'page' => ['title' => config('modules-dashboard.title')],
+            'header' => ['title' => config('modules-dashboard.title')],
+            'selectedMenu' => 'modules-dashboard'
         ];
     }
 
@@ -201,7 +201,7 @@ class ModulesDashboardBusinessController extends Controller {
                 $response->getData()['counts'] ?? [],
                 ['employees', 'customers', 'orders', 'cash']
             );
-            $template = 'modules-dashboard-business::business';
+            $template = 'modules-dashboard::business';
             $this->data['header']['title'] = 'Dashboard';
         }
         $expiry = Carbon::parse($company->access_expires_at);

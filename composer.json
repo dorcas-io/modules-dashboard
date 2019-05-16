@@ -1,6 +1,6 @@
 {
-    "name": "dorcas/modules-dashboard-business",
-    "description": "Dorcas Business Dashboard Module",
+    "name": "dorcas/modules-dashboard",
+    "description": "Dorcas Dashboard Module",
     "type": "library",
     "license": "GPL-3.0-or-later",
     "authors": [
@@ -24,13 +24,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Dorcas\\ModulesDashboardBusiness\\": "src/"
+            "Dorcas\\ModulesDashboard\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Dorcas\\ModulesDashboardBusiness\\ModulesDashboardBusinessServiceProvider"
+                "Dorcas\\ModulesDashboard\\ModulesDashboardServiceProvider"
             ]
         }
     },

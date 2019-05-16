@@ -1,4 +1,4 @@
-# modules-dashboard-business
+# modules-dashboard
 
 
 The **Sales Module** is a core component of the Dorcas Hub is the primary command console styled interface for SMEs to oversee their entire business operations in a glance.
