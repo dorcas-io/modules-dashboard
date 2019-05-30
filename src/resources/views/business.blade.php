@@ -113,7 +113,7 @@
                 business: {!! json_encode($business) !!},
                 subscription: {!! json_encode(!empty($plan) ? $plan : []) !!},
                 businessConfiguration: [],
-                salesGraph: {!! json_encode($salesGraph) !!}
+                /*salesGraph: {!! json_encode($salesGraph) !!}*/
             },
             computed: {
                 greeting: function () {
@@ -136,7 +136,7 @@
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
-                console.log(this.salesGraph);
+                //console.log(this.salesGraph);
 
             },
             methods: {
@@ -153,8 +153,10 @@
                             if (error.response) {
                                 // The request was made and the server responded with a status code
                                 // that falls out of the range of 2xx
-                                var e = error.response.data.errors[0];
-                                message = e.title;
+                            //var e = error.response.data.errors[0];
+                            //message = e.title;
+                            var e = error.response;
+                            message = e.data.message;
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -222,8 +224,10 @@
                         if (error.response) {
                             // The request was made and the server responded with a status code
                             // that falls out of the range of 2xx
-                            var e = error.response.data.errors[0];
-                            message = e.title;
+                            //var e = error.response.data.errors[0];
+                            //message = e.title;
+                            var e = error.response;
+                            message = e.data.message;
                         } else if (error.request) {
                             // The request was made but no response was received
                             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -241,27 +245,6 @@
             }
         });
 
-        /*$(function() {
-            Morris.Line({
-                element: 'line-chart',
-                data: {!! json_encode($salesGraph) !!},
-                xkey: 'date',
-                ykeys: ['count', 'total'],
-                labels: ['Orders', 'Total Value'],
-                parseTime:false,
-                lineColors: ['#0C99D3', '#9C2E9D'],
-                hideHover: false,
-                preUnits: ''
-            });
-            @if (empty($isConfigured))
-                open_configuration_modal();
-            @endif
-        });*/
-        // Start the tour!
-        /*if (document.cookie.replace(/(?:(?:^|.*;\s*)showedNavTour\s*\=\s*([^;]*).*$)|^.*$/, "$1") !== "true") {
-            showTour();
-            document.cookie = "showedNavTour=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-        }*/
         @if (!empty($salesGraph))
 
 			function ordinal_suffix_of(i) {
