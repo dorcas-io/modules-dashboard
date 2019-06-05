@@ -17,7 +17,7 @@
         </div>
 
     <div class="row row-cards row-deck" id="dashboard-statistics">
-    	@foreach ($summary as $figures)
+    	@foreach ($summary as $check => $figures)
 	    	<div class="col-6 col-sm-4 col-lg-2">
 	    		<div class="card p-3">
 	    			<div class="d-flex align-items-center">
@@ -25,7 +25,7 @@
 	    					<i class="{{ $figures['icon'] }}"></i>
 	    				</span>
 	    				<div>
-	    					<h4 class="m-0"><a href="javascript:void(0)">{{ $figures['count_formatted'] }} <small>{{ title_case($figures['name']) }}</small></a></h4>
+	    					<h4 class="m-0"><a href="javascript:void(0)">{{ number_format($figures['number']) }} <small>{{ title_case($check) }}</small></a></h4>
 	    					<small class="text-muted">learn more</small>
 	    				</div>
 	    			</div>
@@ -44,10 +44,10 @@
         <div class="col-sm-12 col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Orders <em>(last 2 weeks)</em></h3>
+                    <h3 class="card-title">Service Requests <em>(last 2 weeks)</em></h3>
                 </div>
                 <div class="card-body">
-                	<div id="chart-sales-graph" style="height: 20rem"></div>
+                	<div id="chart-requests-graph" style="height: 20rem"></div>
                 </div>
             </div>
         </div>
@@ -103,18 +103,13 @@
         new Vue({
             el: '#dashboard',
             data: {
-                applications: [],
-                meta: [],
-                authorization_token: '{{ $authToken or '' }}',
-                stats: {!! json_encode(!empty($stats) ? $stats : []) !!},
                 message: '{{ $message }}',
                 verifying: false,
                 user: {!! json_encode($dorcasUser) !!},
                 business: {!! json_encode($business) !!},
                 subscription: {!! json_encode(!empty($plan) ? $plan : []) !!},
-                businessConfiguration: [],
+                applications: [],
                 apps_fetching: false
-                /*salesGraph: {!! json_encode($salesGraph) !!}*/
             },
             computed: {
                 greeting: function () {
@@ -134,44 +129,8 @@
                 if (typeof this.subscription.price !== 'undefined' && this.subscription.price > 0) {
                     this.showPaystackDialog();
                 }
-                if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
-                    this.businessConfiguration = this.business.extra_data;
-                }
-                this.searchAppStore(1, 12, 'installed_only');
-                //console.log(this.salesGraph);
-
             },
             methods: {
-                resendVerification: function () {
-                    var context = this;
-                    this.verifying = true;
-                    axios.post("/xhr/account/resend-verification")
-                        .then(function (response) {
-                            context.verifying = false;
-                            swal('Email Sent', 'A email was just sent to your address. Kindly follow the instructions in it.', 'success');
-                        }).catch(function (error) {
-                            var message = '';
-                            console.log(error);
-                            if (error.response) {
-                                // The request was made and the server responded with a status code
-                                // that falls out of the range of 2xx
-                            //var e = error.response.data.errors[0];
-                            //message = e.title;
-                            var e = error.response;
-                            message = e.data.message;
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                                // http.ClientRequest in node.js
-                                message = 'The request was made but no response was received';
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                message = error.message;
-                            }
-                            context.verifying = false;
-                            swal("Oops!", message, "danger");
-                        });
-                },
                 showPaystackDialog: function () {
                     var context = this;
                     var handler = PaystackPop.setup({
@@ -226,10 +185,8 @@
                         if (error.response) {
                             // The request was made and the server responded with a status code
                             // that falls out of the range of 2xx
-                            //var e = error.response.data.errors[0];
-                            //message = e.title;
-                            var e = error.response;
-                            message = e.data.message;
+                            var e = error.response.data.errors[0];
+                            message = e.title;
                         } else if (error.request) {
                             // The request was made but no response was received
                             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -242,68 +199,11 @@
                         context.verifying = false;
                         swal("Oops!", message, "danger");
                     });
-                },
-                searchAppStore: function (page, limit, filt) {
-                    let context = this;
-                    if (typeof filt !== 'undefined') {
-                        this.filter = filt;
-                    }
-                    if (typeof page !== 'undefined' && !isNaN(page)) {
-                        this.page_number = page;
-                    }
-                    if (typeof limit !== 'undefined' && !isNaN(limit)) {
-                        this.limit = limit;
-                    }
-                    this.apps_fetching = true;
-                    axios.get("/map/app-store", {
-                        params: {
-                            search: context.search_term,
-                            limit: context.limit,
-                            page: context.page_number,
-                            category_slug: context.category_slug,
-                            filter: filt
-                        }
-                    }).then(function (response) {
-                        context.apps_fetching = false;
-                        context.applications = response.data.data;
-                        context.meta = response.data.meta;
-                    }).catch(function (error) {
-                        var message = '';
-                        context.apps_fetching = false;
-                        console.log(error.response)
-                        if (error.response) {
-                            var e = error.response;
-                            message = e.data.message;
-                        } else if (error.request) {
-
-                            message = 'The request was made but no response was received';
-                        } else {
-                            message = error.message;
-                        }
-                        return swal("Oops!", message, "warning");
-                    });
-                },
-                launchApp: function(index) {
-                    let context = this;
-                    if (this.apps_fetching) {
-                        // currently processing something
-                        swal('Please Wait', 'Your previous request is still processing...', 'info');
-                        return;
-                    }
-                    let app = typeof this.applications[index] !== 'undefined' ? this.applications[index] : {};
-                    if (typeof app.id === 'undefined') {
-                        return;
-                    }
-                    if (app.is_installed && app.homepage_url !== null && app.type === 'web') {
-                        let launch_url = app.homepage_url + '/install/setup?token=' + context.authorization_token;
-                        window.open(launch_url);
-                    }
-                },
-
+                }
             }
         });
 
-        @if (!empty($salesGraph))
+        @if (!empty($requestGraph))
 
 			function ordinal_suffix_of(i) {
 			    var j = i % 10,
@@ -322,26 +222,20 @@
 
             $(function() {
                 c3.generate({
-                    bindto: '#chart-sales-graph', // id of chart wrapper
+                    bindto: '#chart-requests-graph', // id of chart wrapper
                     data: {
-                    	columns: {!! json_encode($salesGraph["columns"]) !!},
+                    	columns: {!! json_encode($requestGraph["columns"]) !!},
                     	type: 'line',
-                    	colors: {!! json_encode($salesGraph["colors"]) !!},
-                    	names: {!! json_encode($salesGraph["names"]) !!},
-                    	axes: {!! json_encode($salesGraph["axes"]) !!},
+                    	colors: {!! json_encode($requestGraph["colors"]) !!},
+                    	names: {!! json_encode($requestGraph["names"]) !!},
+                    	axes: {!! json_encode($requestGraph["axes"]) !!},
                     },
                     axis: {
                         x: {
                             type: 'category',
-                            categories: {!! json_encode($salesGraph["categories"]) !!}
+                            categories: {!! json_encode($requestGraph["categories"]) !!}
                         },
                         y: {
-                        	tick: {
-                        		format: d3.format(",")
-                        	}
-                        },
-                        y2: {
-                            show: true,
                         	tick: {
                         		format: d3.format(",")
                         	}

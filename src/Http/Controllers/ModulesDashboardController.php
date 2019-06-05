@@ -99,21 +99,25 @@ class ModulesDashboardController extends Controller {
             # get the states
         }
         $daysAgo = Carbon::now()->subDays(config('hub.dashboard.graph.days_ago'));
+
         if (!empty($viewMode) && ($viewMode === 'professional' || $viewMode === 'vendor')) {
-            $template = 'home-professional';
+            
             $this->data['professionalProfile'] = $profile = $this->getProfessionalProfile($sdk);
             $this->data['summary'] = [
                 'credentials' => [
-                    'icon' => 'school',
-                    'number' => !empty($profile->professional_credentials) ? count($profile->professional_credentials['data']) : 0
+                    'icon' => 'fa fa-list-alt',
+                    'number' => !empty($profile->professional_credentials) ? count($profile->professional_credentials['data']) : 0,
+                    'bg' => 'bg-purple'
                 ],
                 'experience' => [
-                    'icon' => 'business',
-                    'number' => !empty($profile->professional_experiences) ? count($profile->professional_experiences['data']) : 0
+                    'icon' => 'fa fa-building',
+                    'number' => !empty($profile->professional_experiences) ? count($profile->professional_experiences['data']) : 0,
+                    'bg' => 'bg-red'
                 ],
                 'services' => [
-                    'icon' => 'business_center',
-                    'number' => !empty($profile->professional_services) ? count($profile->professional_services['data']) : 0
+                    'icon' => 'fa fa-briefcase',
+                    'number' => !empty($profile->professional_services) ? count($profile->professional_services['data']) : 0,
+                    'bg' => 'bg-blue'
                 ],
             ];
             
@@ -135,6 +139,50 @@ class ModulesDashboardController extends Controller {
             $this->data['daysAgo'] = 30;
             $this->data['requestGraph'] = $graph = $this->processRequestsGraphData($metricsData->professional);
             # we get the graph data
+
+            //re-parse for c3
+            $professionalGraphColumns = [];
+            $professionalGraphColors = new \stdClass();
+            $professionalGraphNames = new \stdClass();
+            $professionalGraphAxes = new \stdClass();
+            $professionalGraphCategories = [];
+
+            $professionalGraphOld = array_slice($this->data['requestGraph'], 14); //reduce to 2 weeks
+            //the fields we are plotting for
+            $professionalGraphSeries = [
+                "count" => ["title" => "Total", "color" => "#467fcf", "axes" => "y"],
+                "accepted" => ["title" => "Accepted", "color" => "#5eba00", "axes" => "y"],
+                "pending" => ["title" => "Pending", "color" => "#a55eea", "axes" => "y"],
+                "rejected" => ["title" => "Rejected", "color" => "#cd201f", "axes" => "y"]
+            ];
+
+            foreach ($professionalGraphSeries as $skey => $svalue) {
+                $column = [$skey];
+                $professionalGraphColors->{$skey} = $svalue["color"];
+                $professionalGraphNames->{$skey} = $svalue["title"];
+                $professionalGraphAxes->{$skey} = $svalue["axes"];
+                foreach ($professionalGraphOld as $okey => $ovalue) {
+                    $column[] = $ovalue[$skey];
+                }
+                $professionalGraphColumns[] = $column;
+            }
+
+            foreach ($professionalGraphOld as $dkey => $dvalue) {
+                $date = explode(" ", $dvalue["date"]);
+                $professionalGraphCategories[] = $this->ordinal((int) $date[0]);
+            }
+
+            $this->data['requestGraph'] = [
+                "columns" => $professionalGraphColumns,
+                "colors" => $professionalGraphColors,
+                "names" => $professionalGraphNames,
+                "axes" => $professionalGraphAxes,
+                "categories" => $professionalGraphCategories
+            ];
+
+            $template = 'modules-dashboard::professional';
+            $this->data['page']['title'] = 'Professional Dashboard';
+            $this->data['header']['title'] = 'Professional Dashboard';
             
         } else {
             # default view mode
@@ -202,8 +250,10 @@ class ModulesDashboardController extends Controller {
                 ['employees', 'customers', 'orders', 'cash']
             );
             $template = 'modules-dashboard::business';
-            $this->data['header']['title'] = 'Dashboard';
+            $this->data['page']['title'] = 'Business Dashboard';
+            $this->data['header']['title'] = 'Business Dashboard';
         }
+
         $expiry = Carbon::parse($company->access_expires_at);
         # get the expiry
         if ($expiry->lessThanOrEqualTo(Carbon::now()) && empty($company->extra_data['paystack_auth_code'])) {
@@ -215,7 +265,8 @@ class ModulesDashboardController extends Controller {
             }
             $this->data['plan']['price'] = $plan['price_' . $company->plan_type]['raw'];
         }
-        //dd($this->data['salesGraph']);
+        
+        $this->data['authToken'] = $sdk->getAuthorizationToken();
         return view($template, $this->data);
     }
     
