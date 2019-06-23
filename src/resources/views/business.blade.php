@@ -61,7 +61,7 @@
 		                <div class="table-responsive" v-if="applications.length > 0">
 		                    <table class="table card-table table-striped table-vcenter">
 		                        <tbody>
-		                            <tr v-for="app in applications" :key="app.id">
+		                            <tr v-for="(app, index) in applications" :key="app.id">
 		                                <td class="w-1">
 		                                    <span class="avatar">@{{ app.name.substr(0, 1) }}</span>
 		                                </td>
