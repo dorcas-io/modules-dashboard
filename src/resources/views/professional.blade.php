@@ -37,7 +37,7 @@
 
 	<div class="alert alert-avatar alert-primary alert-dismissible">
 	  <span class="avatar" style="background-image: url({{ \Illuminate\Support\Facades\Auth::user()->photo }})"></span>
-	    <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l d, F, Y') }}</p>
+	    <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
 	</div>
 
     <div class="row row-cards row-deck" id="dashboard-data">
