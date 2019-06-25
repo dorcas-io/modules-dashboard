@@ -247,8 +247,8 @@ class ModulesDashboardController extends Controller {
             # get the company status
             $this->data['summary'] = self::prepareSummary(
                 $response->getData()['counts'] ?? [],
-                ['employees', 'customers', 'orders', 'cash']
-            );
+                ['employees', 'customers', 'orders']
+            ); //, 'cash'
             $template = 'modules-dashboard::business';
             $this->data['page']['title'] = 'Business Dashboard';
             $this->data['header']['title'] = 'Business Dashboard';
