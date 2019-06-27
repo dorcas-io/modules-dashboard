@@ -10,7 +10,7 @@
                     @endslot
                     Your account has not yet been verified, would you like to do that now?
                     @slot('buttons')
-                    	<button v-on:click.prevent="resendVerification" class="btn btn-secondary" type="button">Resend Email</button>
+                    	<button v-on:click.prevent="resendVerification" class="btn btn-secondary" type="button">Send Verification Email</button>
                     @endslot
                 @endcomponent
             </div>
@@ -95,6 +95,7 @@
                 </div>
             </div>
         </div>
+        @include('modules-dashboard::modals.message')
     </div>
 
 @endsection
@@ -108,6 +109,7 @@
                 authorization_token: '{{ $authToken or '' }}',
                 stats: {!! json_encode(!empty($stats) ? $stats : []) !!},
                 message: '{{ $message }}',
+                dashboard_message: { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' },
                 verifying: false,
                 user: {!! json_encode($dorcasUser) !!},
                 business: {!! json_encode($business) !!},
@@ -125,19 +127,34 @@
                         return 'afternoon';
                     }
                     return 'evening';
+                },
+                account_expired: function() {
+                    var expireString = 'account subscription expired'
+                    var url = document.location.toString();
+                    return url.match(expireString) ? true : false
                 }
             },
             mounted: function () {
+                //console.log(this.message)
                 if (this.message !== null && this.message.length > 0) {
-                    Materialize.toast(this.message, 4000);
+                    //Materialize.toast(this.message, 4000);
+                    this.dashboard_message.title = "Subscription Expired"
+                    this.dashboard_message.body = "<p>" + this.message + "</p>"
+                    this.dashboard_message.action = "Renew Subscription"
+                    this.dashboard_message.action_url = "/mse/settings-subscription"
+                    $('#dashboard-message-modal').modal('show'); 
                 }
                 if (typeof this.subscription.price !== 'undefined' && this.subscription.price > 0) {
-                    this.showPaystackDialog();
+                    //this.showPaystackDialog();
                 }
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
-                this.searchAppStore(1, 12, 'installed_only');
+                if (!account_expired) {
+                    this.apps_fetching = true;
+                    this.searchAppStore(1, 12, 'installed_only');
+                }
+                
                 //console.log(this.salesGraph);
 
             },
