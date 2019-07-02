@@ -127,11 +127,6 @@
                         return 'afternoon';
                     }
                     return 'evening';
-                },
-                account_expired: function() {
-                    var expireString = 'account subscription expired'
-                    var url = document.location.toString();
-                    return url.match(expireString) ? true : false
                 }
             },
             mounted: function () {
@@ -154,18 +149,24 @@
                 } else {
                     this.searchAppStore(1, 12, 'installed_only');
                 }
-                //console.log(this.account_expired)
-                //console.log(this.applications)
+                console.log(this.account_expired())
+                console.log(this.applications)
                 
                 //console.log(this.salesGraph);
 
             },
             methods: {
+                account_expired: function() {
+                    var expireString = 'account subscription expired'
+                    var url = document.location.toString();
+                    return url.match(expireString) ? true : false
+                },
                 resendVerification: function () {
                     var context = this;
                     this.verifying = true;
                     axios.post("/xhr/account/resend-verification")
                         .then(function (response) {
+                            console.log(response)
                             context.verifying = false;
                             swal('Email Sent', 'A email was just sent to your address. Kindly follow the instructions in it.', 'success');
                         }).catch(function (error) {
