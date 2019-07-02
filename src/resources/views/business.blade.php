@@ -135,7 +135,6 @@
                 }
             },
             mounted: function () {
-                //console.log(this.message)
                 if (this.message !== null && this.message.length > 0) {
                     //Materialize.toast(this.message, 4000);
                     this.dashboard_message.title = "Subscription Expired"
@@ -150,10 +149,13 @@
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
-                if (!account_expired) {
+                if (this.account_expired) {
                     this.apps_fetching = true;
+                } else {
                     this.searchAppStore(1, 12, 'installed_only');
                 }
+                //console.log(this.account_expired)
+                //console.log(this.applications)
                 
                 //console.log(this.salesGraph);
 
