@@ -144,13 +144,14 @@
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
-                if (this.account_expired) {
+                /*if (this.account_expired()) {
                     this.apps_fetching = true;
                 } else {
                     this.searchAppStore(1, 12, 'installed_only');
-                }
-                console.log(this.account_expired())
-                console.log(this.applications)
+                }*/
+                this.searchAppStore(1, 12, 'installed_only');
+                //console.log(this.account_expired())
+                //console.log(this.applications)
                 
                 //console.log(this.salesGraph);
 
