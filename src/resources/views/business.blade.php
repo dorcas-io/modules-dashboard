@@ -26,7 +26,7 @@
 	    				</span>
 	    				<div>
 	    					<h4 class="m-0"><a href="javascript:void(0)">{{ $figures['count_formatted'] }} <small>{{ title_case($figures['name']) }}</small></a></h4>
-	    					<small class="text-muted">learn more</small>
+	    					<!-- <small class="text-muted">learn more</small> -->
 	    				</div>
 	    			</div>
 	    		</div>

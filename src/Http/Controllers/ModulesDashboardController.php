@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
+use Dorcas\ModulesAssistant\Http\Controllers\ModulesAssistantController as Assistant;
 
 class ModulesDashboardController extends Controller {
 
@@ -40,8 +41,8 @@ class ModulesDashboardController extends Controller {
         ['name' => 'People', 'id' => 'organisation', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/people'],
         ['name' => 'Sales', 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => ['apps/inventory', 'apps/invoicing']],
         ['name' => 'Settings', 'id' => 'settings', 'enabled' => true, 'is_readonly' => false, 'path' => 'settings'],
-        ['name' => 'Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true],
-        ['name' => 'Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true],
+        ['name' => 'Professional Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true],
+        ['name' => 'Product Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true],
     ];
 
     public function __construct()
@@ -98,6 +99,22 @@ class ModulesDashboardController extends Controller {
             $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
             # get the states
         }
+
+
+        $dorcasUser = $request->user();
+        if (!empty($dorcasUser)) {
+            if (!empty($dorcasUser->partner) && !empty($dorcasUser->partner['data'])) {
+                $partner = (object) $dorcasUser->partner['data'];
+                $partnerConfig = (array) $partner->extra_data;
+                $hubConfig = $partnerConfig['hubConfig'] ?? [];
+            }
+        }
+
+        if (!$this->data['isConfigured']) {
+            return redirect(route('welcome-setup'));
+        }
+        # first time users
+
         $daysAgo = Carbon::now()->subDays(config('hub.dashboard.graph.days_ago'));
 
         if (!empty($viewMode) && ($viewMode === 'professional' || $viewMode === 'vendor')) {
@@ -277,8 +294,9 @@ class ModulesDashboardController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function post(Request $request, Sdk $sdk)
+    public function welcome_post(Request $request, Sdk $sdk)
     {
+        //dd($request);
         $this->validate($request, [
             'business_name' => 'required|string|max:80',
             'business_type' => 'required|string|max:80',
@@ -286,10 +304,9 @@ class ModulesDashboardController extends Controller {
             'business_size' => 'required|string|max:80',
             'business_country' => 'required|string|max:80',
             'business_state' => 'nullable|string|max:80',
-            'currency' => 'nullable|string|size:3',
-            'selected_apps' => 'required|array',
-            'selected_apps.*' => 'string'
+            'currency' => 'nullable|string|size:3'
         ]);
+        // additional validation entry => 'selected_apps.*' => 'string'
         # validate the request
         $company = $this->getCompany();
         # get the company
@@ -328,19 +345,26 @@ class ModulesDashboardController extends Controller {
             $query = $sdk->createCompanyService()->addBodyParam('name', $request->business_name, true)
                                                 ->addBodyParam('extra_data', $configurations)
                                                 ->send('PUT');
+
+                                                //dd($query);
             # send the request
             if (!$query->isSuccessful()) {
                 throw new \RuntimeException('Failed while updating your business information. Please try again.');
             }
-            $message = ['Successfully updated business information for '.$request->name];
-            $response = (material_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
+            //$message = ['Successfully updated business information for '.$request->name];
+            //$response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
         } catch (ServerException $e) {
-            $message = json_decode((string) $e->getResponse()->getBody(), true);
-            $response = (material_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            //$message = json_decode((string) $e->getResponse()->getBody(), true);
+            //$response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            throw new \RuntimeException($message['message']);
         } catch (\Exception $e) {
-            $response = (material_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            //$response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            //return redirect(url()->current())->with('UiResponse', $response);
+            throw new \RuntimeException($e->getMessage());
         }
-        return redirect(url()->current())->with('UiResponse', $response);
+        //return redirect(url()->current())->with('UiResponse', $response);
+        return response()->json($query->getData());
+
     }
 
     /**
@@ -428,6 +452,90 @@ class ModulesDashboardController extends Controller {
             return $number. 'th';
         else
             return $number. $ends[$number % 10];
+    }
+
+
+    public function welcome_setup(Request $request, Sdk $sdk) {
+
+        $hubname = !empty($hubConfig['product_name']) ? $hubConfig['product_name'] : config('app.name');
+        $this->data['page']['title'] = 'Welcome to the ' . $hubname;
+        $this->data['header']['title'] = 'Welcome to the ' . $hubname;
+        $this->data['submenuConfig'] = 'navigation-menu.modules-dashboard.sub-menu';
+        $this->data['selectedSubMenu'] = 'welcome-setup';
+        $this->data['submenuAction'] = '';
+
+        $this->setViewUiResponse($request);
+
+        $company = $request->user()->company(true, true);
+        
+        $userConfigurations = (array) $request->user()->extra_configurations;
+        $userUiSetup = $userConfigurations['ui_setup'] ?? [];
+        $configurations = (array) $company->extra_data;
+        $this->data['isConfigured'] = true;
+        if (empty($userUiSetup)) {
+            # user's UI is not configured
+            $this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
+            if ($request->has('show_ui_wizard')) {
+                $this->data['isConfigured'] = false;
+            } else {
+                $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
+            }
+            # check if the UI has been configured
+            $currentUiSetup = $configurations['ui_setup'] ?? [];
+            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+                if (!empty($field['is_readonly'])) {
+                    return $field;
+                }
+                if (empty($currentUiSetup)) {
+                    return $field;
+                }
+                $field['enabled'] = in_array($field['id'], $currentUiSetup);
+                return $field;
+            });
+            # add the UI components
+        }
+        $this->data['countries'] = $countries = $this->getCountries($sdk);
+        # get the countries listing
+        $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
+        # get the nigeria country model
+        if (!empty($nigeria)) {
+            $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
+            # get the states
+        }
+
+
+        $dorcasUser = $request->user();
+        if (!empty($dorcasUser)) {
+            if (!empty($dorcasUser->partner) && !empty($dorcasUser->partner['data'])) {
+                $partner = (object) $dorcasUser->partner['data'];
+                $partnerConfig = (array) $partner->extra_data;
+                $hubConfig = $partnerConfig['hubConfig'] ?? [];
+            }
+        }
+
+        if (!$this->data['isConfigured']) {
+            return view('modules-dashboard::welcome.setup', $this->data);
+        } else {
+            return redirect(route('dashboard'));
+        }
+    }
+
+
+    public function welcome_overview(Request $request, Sdk $sdk) {
+
+        //$hubname = !empty($hubConfig['product_name']) ? $hubConfig['product_name'] : config('app.name');
+        $this->data['page']['title'] = 'Overview of the Hub';
+        $this->data['header']['title'] = 'Overview of the Hub';
+        $this->data['submenuConfig'] = 'navigation-menu.modules-dashboard.sub-menu';
+        $this->data['selectedSubMenu'] = 'welcome-overview';
+        $this->data['submenuAction'] = '';
+
+        $this->data['assistantModules'] = (new Assistant())->getModules($request);
+
+        $this->setViewUiResponse($request);
+
+        return view('modules-dashboard::welcome.overview', $this->data);
+        
     }
 
 
