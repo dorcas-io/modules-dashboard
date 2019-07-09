@@ -17,15 +17,19 @@
                 </div>
                 <div class="card-body">
 
-					<div class="alert alert-avatar alert-primary alert-dismissible">
+					<div class="alert alert-avatar alert-primary col-sm-12" id="welcome-area">
 					  <span class="avatar" style="background-image: url({{ cdn('images/avatar/avatar-9.png') }})"></span>
 					  The Hub is an all-in-one productivity software platform that helps you run your entire business better.
 					  <br/><br/>
 					  It is basically a collection of tools that you can use to digitally manage e-commerce, sales, people, accounting and so much more!
 					  <br/><br/>
 					  <div class="btn-list">
-					    <button class="btn btn-success btn-sm" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
-					    <!-- <button class="btn btn-secondary" type="button">No, thanks</button> -->
+					    <button class="btn btn-success" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
+                        @if ($isConfigured)
+                            <a class="btn btn-secondary" href="{{ route('welcome-overview') }}">Go to Overview</a>
+                            <button class="btn btn-primary" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
+                            <a class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
+                        @endif
 					  </div> 
 					</div>
                 	 
@@ -180,6 +184,9 @@
 
             },
             methods: {
+                startHubTour: function() {
+                    assistantVue.startHubTour(welcomeTour);
+                },
                 watchVideo: function () {
                     $('#welcome-video-modal').modal('show');
 

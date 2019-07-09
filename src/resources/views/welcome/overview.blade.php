@@ -9,12 +9,23 @@
     @include('layouts.blocks.tabler.sub-menu')
 
     <div class="col-md-9 col-lg-9" id="welcome-overview">
-
 	    
     	<div class="row ">
-				<div class="alert alert-avatar alert-success alert-dismissible col-md-12">
+				<div class="alert alert-avatar alert-success col-md-12" id="welcome-area">
 				  <span class="avatar" style="background-image: url({{ cdn('images/avatar/avatar-9.png') }})"></span>
-				  Welcome back! We would like to give you a tour of the available features as well as the new Hub interface
+				  <h4>Welcome back!</h4>
+                  <p>
+                    Below are details of the available features of Hub platform; reading through  will help get you started
+                  </p>
+				  <p>
+				  	Additionally, you can do the following:
+				  </p>
+                  <div class="btn-list">
+                    <button class="btn btn-success" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Quick Tour</button>
+                    <a class="btn btn-secondary" href="{{ route('welcome-setup') }}">Go to Setup</a>
+                    <a class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
+                  </div>
+
 				</div>
     	</div>
 
@@ -59,13 +70,20 @@
 @endsection
 @section('body_js')
     <script type="text/javascript">
+
+
         var vmOverviewModal = new Vue({
             el: '#welcome-overview',
             data: {
-                viewMode: headerAuthVue.viewMode,
+                viewMode: headerAuthVue.viewMode
             },
             mounted: function () {
 
+            },
+            methods: {
+            	startHubTour: function() {
+            		assistantVue.startHubTour(welcomeTour);
+            	}
             },
             computed: {
 

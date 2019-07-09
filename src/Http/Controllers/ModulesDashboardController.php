@@ -513,11 +513,12 @@ class ModulesDashboardController extends Controller {
             }
         }
 
-        if (!$this->data['isConfigured']) {
+        /*if (!$this->data['isConfigured']) {
             return view('modules-dashboard::welcome.setup', $this->data);
         } else {
             return redirect(route('dashboard'));
-        }
+        }*/
+        return view('modules-dashboard::welcome.setup', $this->data);
     }
 
 
