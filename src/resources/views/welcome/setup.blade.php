@@ -83,6 +83,7 @@
                                 <option value="Mining">Mining</option>
                                 <option value="Music & Film">Music & Film</option>
                                 <option value="Manufacturing">Manufacturing</option>
+                                <option value="Retail">Retail</option>
                                 <option value="Steel">Steel</option>
                                 <option value="Telecommunications">Telecommunications</option>
                                 <option value="Transport">Transport</option>
