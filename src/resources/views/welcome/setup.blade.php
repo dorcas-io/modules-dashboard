@@ -27,7 +27,7 @@
 					    <button class="btn btn-success" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
                         @if ($isConfigured)
                             <a class="btn btn-secondary" href="{{ route('welcome-overview') }}">Go to Overview</a>
-                            <button class="btn btn-primary" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
+                            <button class="btn btn-primary d-none d-md-inline" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
                             <a class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
                         @endif
 					  </div> 

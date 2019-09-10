@@ -21,7 +21,7 @@
 				  	Additionally, you can do the following:
 				  </p>
                   <div class="btn-list">
-                    <button class="btn btn-success" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Quick Tour</button>
+                    <button class="btn btn-success d-none d-md-inline" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Quick Tour</button>
                     <a class="btn btn-secondary" href="{{ route('welcome-setup') }}">Go to Setup</a>
                     <a class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
                   </div>

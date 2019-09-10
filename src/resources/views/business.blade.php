@@ -167,12 +167,12 @@
                     this.verifying = true;
                     axios.post("/xhr/account/resend-verification")
                         .then(function (response) {
-                            console.log(response)
+                            //console.log(response)
                             context.verifying = false;
                             swal('Email Sent', 'A email was just sent to your address. Kindly follow the instructions in it.', 'success');
                         }).catch(function (error) {
                             var message = '';
-                            console.log(error);
+                            //console.log(error);
                             if (error.response) {
                                 // The request was made and the server responded with a status code
                                 // that falls out of the range of 2xx
