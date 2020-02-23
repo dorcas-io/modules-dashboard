@@ -165,7 +165,7 @@
                 resendVerification: function () {
                     var context = this;
                     this.verifying = true;
-                    axios.post("/xhr/account/resend-verification")
+                    axios.post("/dashboard/resend-verification")
                         .then(function (response) {
                             //console.log(response)
                             context.verifying = false;
