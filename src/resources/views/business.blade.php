@@ -190,7 +190,7 @@
                                 message = error.message;
                             }
                             context.verifying = false;
-                            swal("Oops!", message, "danger");
+                            swal("Oops!", message, "warning");
                         });
                 },
                 showPaystackDialog: function () {
