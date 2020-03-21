@@ -138,16 +138,24 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4 d-none">
-                        @foreach ($setupUiFields as $field)
-		                    <div class="col-md-4 col-lg-3">
-		                        <label class="custom-switch">
-		                            <input type="checkbox" name="selected_apps[]" multiple value="{{ $field['id'] }}" {{ !empty($field['enabled']) ? 'checked' : '' }} {{ !empty($field['is_readonly']) ? 'disabled' : '' }} class="custom-switch-input">
-		                            <span class="custom-switch-indicator"></span>
-		                            <span class="custom-switch-description">{{ $field['name'] }}</span>
-		                        </label>
-		                    </div>
-                        @endforeach
+                    <div class="row mt-4">
+                        <div class="col-sm-12 col-md-12">
+                            <p class="text-uppercase">
+                                Select all <strong>Hub modules</strong> would you like to activate
+                                <hr>
+                            </p>
+                        </div>
+
+                            @foreach ($setupUiFields as $field)
+    		                    <div class="col-md-4 col-lg-3">
+    		                        <label class="custom-switch">
+    		                            <input type="checkbox" name="selected_apps[]" multiple value="{{ $field['id'] }}" {{ !empty($field['enabled']) ? 'checked' : '' }} {{ !empty($field['is_readonly']) ? 'disabled' : '' }} class="custom-switch-input">
+    		                            <span class="custom-switch-indicator"></span>
+    		                            <span class="custom-switch-description">{{ $field['name'] }}</span>
+    		                        </label>
+    		                    </div>
+                            @endforeach
+
                     </div>
 
 				</form>

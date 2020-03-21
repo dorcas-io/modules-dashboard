@@ -32,7 +32,7 @@ class ModulesDashboardController extends Controller {
     ];
     
     /** @var array  */
-    const SETUP_UI_COMPONENTS = [
+    /*const SETUP_UI_COMPONENTS = [
         ['name' => 'App Store', 'id' => 'appstore', 'enabled' => true, 'is_readonly' => false, 'path' => 'app-store'],
         ['name' => 'Customers', 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/crm'],
         ['name' => 'eCommerce', 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/ecommerce'],
@@ -43,6 +43,19 @@ class ModulesDashboardController extends Controller {
         ['name' => 'Settings', 'id' => 'settings', 'enabled' => true, 'is_readonly' => false, 'path' => 'settings'],
         ['name' => 'Professional Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true],
         ['name' => 'Product Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true],
+    ];*/
+
+    const SETUP_UI_COMPONENTS = [
+        ['name' => 'Dashboard', 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => false, 'path' => 'dashboard', 'children' => []],
+        ['name' => 'Customers', 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'mcu', 'children' => []],
+        ['name' => 'eCommerce', 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'mec', 'children' => []],
+        ['name' => 'People', 'id' => 'organisation', 'enabled' => true, 'is_readonly' => false, 'path' => 'mpe', 'children' => []],
+        ['name' => 'Finance', 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'mfn', 'children' => []],
+        ['name' => 'Sales', 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => 'msl', 'children' => []],
+        ['name' => 'Addons', 'id' => 'addons', 'enabled' => true, 'is_readonly' => false, 'path' => ['mli', 'mmp', 'map', 'mit'], 'children' => []],
+        ['name' => 'Settings', 'id' => 'settings', 'enabled' => true, 'is_readonly' => false, 'path' => 'settings', 'children' => []],
+        ['name' => 'Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp'], 'children' => []],
+        ['name' => 'Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'children' => []],
     ];
 
     public function __construct()
@@ -345,6 +358,9 @@ class ModulesDashboardController extends Controller {
             $query = $sdk->createCompanyService()->addBodyParam('name', $request->business_name, true)
                                                 ->addBodyParam('extra_data', $configurations)
                                                 ->send('PUT');
+
+
+            //Cache::forget('business.employees.'.$company->id);                                     
 
                                                 //dd($query);
             # send the request
