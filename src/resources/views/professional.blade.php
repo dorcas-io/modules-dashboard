@@ -10,7 +10,7 @@
                     @endslot
                     Your account has not yet been verified, would you like to do that now?
                     @slot('buttons')
-                    	<button v-on:click.prevent="resendVerification" class="btn btn-secondary" type="button">Resend Email</button>
+                    	<button v-on:click.prevent="resendVerification" class="btn btn-secondary" :class="{'btn-loading':verifying}" type="button">Resend Email</button>
                     @endslot
                 @endcomponent
             </div>
