@@ -6,7 +6,7 @@ return [
         'icon' => 'fe fe-power'
     ],
     'welcome-overview' => [
-        'title' => 'Overview',
+        'title' => 'Features',
         'route' => 'welcome-overview',
         'icon' => 'fe fe-sliders'
     ]

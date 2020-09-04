@@ -26,9 +26,9 @@
 					  <div class="btn-list">
 					    <button class="btn btn-success" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
                         @if ($isConfigured)
-                            <a class="btn btn-secondary" href="{{ route('welcome-overview') }}">Go to Overview</a>
-                            <button class="btn btn-primary d-none d-md-inline" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
-                            <a class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
+                            <a v-if="isConfigured" class="btn btn-secondary" href="{{ route('welcome-overview') }}">Explore Features</a>
+                            <button v-if="isConfigured" class="btn btn-primary d-none d-md-inline" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
+                            <a v-if="isConfigured" class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
                         @endif
 					  </div> 
 					</div>
@@ -138,7 +138,7 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
+                    <div class="row mt-4 d-none">
                         <div class="col-sm-12 col-md-12">
                             <p class="text-uppercase">
                                 Select all <strong>Hub modules</strong> would you like to activate
@@ -181,7 +181,8 @@
                 business: {!! json_encode($business) !!},
                 subscription: {!! json_encode(!empty($plan) ? $plan : []) !!},
                 businessConfiguration: [],
-                submittingSetup: false
+                submittingSetup: false,
+                isConfigured: {!! $isConfigured !!}
             },
             computed: {
 
@@ -190,9 +191,18 @@
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
+                console.log(this.isConfigured);
 
             },
             methods: {
+                /*isConfigured: function() {
+                    if (this.isConfigured) {
+                        console.log('confi')
+                    } else {
+                        console.log('not confi')
+                    }
+
+                },*/
                 startHubTour: function() {
                     assistantVue.startHubTour(welcomeTour);
                 },

@@ -15,6 +15,9 @@
                 @endcomponent
             </div>
         </div>
+        <div class="row">
+                @include('layouts.blocks.tabler.alert')
+        </div>
 
     <div class="row row-cards row-deck" id="dashboard-statistics">
     	@foreach ($summary as $figures)
@@ -130,6 +133,7 @@
                 }
             },
             mounted: function () {
+                //console.log(this.business);
                 if (this.message !== null && this.message.length > 0) {
                     //Materialize.toast(this.message, 4000);
                     this.dashboard_message.title = "Subscription Expired"
@@ -291,7 +295,7 @@
                     }).catch(function (error) {
                         var message = '';
                         context.apps_fetching = false;
-                        console.log(error.response)
+                        //console.log(error.response)
                         if (error.response) {
                             var e = error.response;
                             message = e.data.message;

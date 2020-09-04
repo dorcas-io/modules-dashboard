@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
 use Dorcas\ModulesAssistant\Http\Controllers\ModulesAssistantController as Assistant;
+use App\Http\Controllers\HubController as HubControl;
 
 class ModulesDashboardController extends Controller {
 
@@ -46,16 +47,18 @@ class ModulesDashboardController extends Controller {
     ];*/
 
     const SETUP_UI_COMPONENTS = [
-        ['name' => 'Dashboard', 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => false, 'path' => 'dashboard', 'children' => []],
-        ['name' => 'Customers', 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'mcu', 'children' => []],
-        ['name' => 'eCommerce', 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'mec', 'children' => []],
-        ['name' => 'People', 'id' => 'people', 'enabled' => true, 'is_readonly' => false, 'path' => 'mpe', 'children' => []],
-        ['name' => 'Finance', 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'mfn', 'children' => []],
-        ['name' => 'Sales', 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => 'msl', 'children' => []],
-        ['name' => 'Addons', 'id' => 'addons', 'enabled' => true, 'is_readonly' => false, 'path' => ['mli', 'mmp', 'map', 'mit'], 'children' => []],
-        ['name' => 'Settings', 'id' => 'settings', 'enabled' => true, 'is_readonly' => false, 'path' => 'mse', 'children' => []],
-        ['name' => 'Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
-        ['name' => 'Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'children' => []],
+        ['name' => 'Dashboard', 'base' => true, 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => true, 'path' => 'dashboard', 'children' => []],
+        ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'mcu', 'children' => []],
+        ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'mec', 'children' => []],
+        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => true, 'is_readonly' => false, 'path' => 'mpe', 'children' => []],
+        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'mfn', 'children' => []],
+        ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => 'msl', 'children' => []],
+        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => true, 'is_readonly' => false, 'path' => 'mop', 'children' => []],
+        //['name' => 'Addons', 'id' => 'addons', 'enabled' => true, 'is_readonly' => false, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
+        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
+        ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
+        ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
+        ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
     ];
 
     public function __construct()
@@ -383,6 +386,135 @@ class ModulesDashboardController extends Controller {
 
     }
 
+
+    /**
+     * @param Request $request
+     * @param Sdk     $sdk
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function welcome_features(Request $request, Sdk $sdk)
+    {
+        //dd($request);
+        /*$this->validate($request, [
+            'business_name' => 'required|string|max:80',
+            'business_type' => 'required|string|max:80',
+            'business_sector' => 'required|string|max:80',
+            'business_size' => 'required|string|max:80',
+            'business_country' => 'required|string|max:80',
+            'business_state' => 'nullable|string|max:80',
+            'currency' => 'nullable|string|size:3'
+        ]);*/
+        // additional validation entry => 'selected_apps.*' => 'string'
+        # validate the request
+        $company = $this->getCompany();
+        # get the company
+        $configurations = (array) $company->extra_data;
+        $this->data['isConfigured'] = !empty($configurations['ui_setup']);
+        
+        
+        $baseFeatures = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['base']);
+        })->pluck('id');
+        # get the base values
+        
+        
+        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && !empty($field['enabled']);
+        })->pluck('id');
+        # get the enabled-readonly values
+        
+        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && empty($field['enabled']);
+        })->pluck('id');
+        # get the disabled-readonly values
+        
+        //$selectedApps = collect($request->input('selected_apps', []))->merge($readonlyExtend);
+        $selectedApps = collect($request->input('selected_apps', []))->merge($readonlyExtend)->merge($baseFeatures);
+        # set the selected apps
+        
+        $selectedApps = $selectedApps->filter(function ($id) use ($readonlyRemovals) {
+            return !$readonlyRemovals->contains($id);
+        });
+        # remove them
+        
+        try {
+            $configurations['ui_setup'] = $selectedApps->unique()->all();
+
+            $partnerSubscriptionMeta = HubControl::getPartnerSubscriptionMeta($request, $sdk);
+
+            $partnerSubscriptionValue = $partnerSubscriptionMeta["partnerSubscriptionValue"];
+
+            if ($partnerSubscriptionValue["plan"]=="starter")  { //starting sub
+                $starterSubscription = true;
+                $subscriptionPackagesCurrent = collect($partnerSubscriptionMeta["partnerSubscriptionModulesCurrent"])->first();
+            } else {
+                $starterSubscription = false;
+                $subscriptionPackagesCurrent = collect($partnerSubscriptionMeta["partnerSubscriptionModulesCurrent"])->all();
+            }
+            $this->data['starterSubscription'] = $starterSubscription;
+
+            $subscriptionPackagesUpgrade = collect($partnerSubscriptionMeta["partnerSubscriptionModulesUpgrade"])->all();
+
+            $partnerSubscriptionModules = collect($partnerSubscriptionMeta["partnerSubscriptionModules"]);
+
+            //update subscription memory data
+            $memory_config = $configurations['memory_config'] ?? [];
+            $subscription = $memory_config["subscription"] ?? [];
+
+            foreach ($selectedApps->unique()->all() as $app) {
+                //$sub = $subscription[$app] ?? [];
+                $sub = [];
+                if (empty($sub)) {
+                    $sub["plan"] = $partnerSubscriptionValue["plan"];
+                    $sub["title"] = $partnerSubscriptionValue["title"];
+                    $subscription_id = $subscriptionPackagesCurrent["subscription_id"];
+                    if ($starterSubscription) {
+                        $sub["subscription_title"] = $subscriptionPackagesCurrent["title"];
+                        $sub["subscription_slug"] = $subscriptionPackagesCurrent["slug"];
+                        $sub["subscription"] = $partnerSubscriptionMeta["partnerSubscriptions"][$subscription_id];
+                        $sub["subscriptions"] = $partnerSubscriptionModules->filter(function ($value, $key) use ($app) {
+                            return in_array($app, $value["modules"]);
+                        })->pluck('slug')->all();
+                        $sub["mode"] = "Active";
+                        $sub["expires"] = Carbon::now()->addDays($subscriptionPackagesCurrent["trial_days"])->format('Y-m-d H:i:s');       
+                    } else {
+
+                    }
+
+                }
+                $subscription[$app] = $sub;
+            }
+            
+            $memory_config['subscription'] = $subscription;
+            $configurations['memory_config'] = $memory_config;
+            $query = $sdk->createCompanyService()->addBodyParam('extra_data', $configurations)
+                                                ->send('PUT');
+
+            //Cache::forget('business.employees.'.$company->id);                                     
+                                                //dd($query);
+            # send the request
+            if (!$query->isSuccessful()) {
+                throw new \RuntimeException('Failed while updating your business information. Please try again.');
+            }
+            //$message = ['Successfully updated business information for '.$request->name];
+            //$response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
+        } catch (ServerException $e) {
+            //$message = json_decode((string) $e->getResponse()->getBody(), true);
+            //$response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            throw new \RuntimeException($message['message']);
+        } catch (\Exception $e) {
+            //$response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            //return redirect(url()->current())->with('UiResponse', $response);
+            throw new \RuntimeException($e->getMessage());
+        }
+        //return redirect(url()->current())->with('UiResponse', $response);
+        return response()->json($query->getData());
+
+    }
+
+
     /**
      * @param array $metrics
      *
@@ -541,8 +673,8 @@ class ModulesDashboardController extends Controller {
     public function welcome_overview(Request $request, Sdk $sdk) {
 
         //$hubname = !empty($hubConfig['product_name']) ? $hubConfig['product_name'] : config('app.name');
-        $this->data['page']['title'] = 'Overview of the Hub';
-        $this->data['header']['title'] = 'Overview of the Hub';
+        $this->data['page']['title'] = 'Features of the Hub';
+        $this->data['header']['title'] = 'Features of the Hub';
         $this->data['submenuConfig'] = 'navigation-menu.modules-dashboard.sub-menu';
         $this->data['selectedSubMenu'] = 'welcome-overview';
         $this->data['submenuAction'] = '';
@@ -550,6 +682,46 @@ class ModulesDashboardController extends Controller {
         $this->data['assistantModules'] = (new Assistant())->getModules($request);
 
         $this->setViewUiResponse($request);
+
+        $company = $request->user()->company(true, true);
+        
+        $userConfigurations = (array) $request->user()->extra_configurations;
+        $userUiSetup = $userConfigurations['ui_setup'] ?? [];
+        $configurations = (array) $company->extra_data;
+        $this->data['isConfigured'] = true;
+        if (empty($userUiSetup)) {
+            # user's UI is not configured
+            $this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
+            if ($request->has('show_ui_wizard')) {
+                $this->data['isConfigured'] = false;
+            } else {
+                $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
+            }
+            # check if the UI has been configured
+            $currentUiSetup = $configurations['ui_setup'] ?? [];
+            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+                if (!empty($field['is_readonly'])) {
+                    return $field;
+                }
+                if (empty($currentUiSetup)) {
+                    return $field;
+                }
+                $field['enabled'] = in_array($field['id'], $currentUiSetup);
+                return $field;
+            });
+            # add the UI components
+        }
+
+
+        $memory_config = $configurations['memory_config'] ?? [];
+        $subscription = $memory_config["subscription"] ?? [];
+
+        $partnerSubscriptionMeta = HubControl::getPartnerSubscriptionMeta($request, $sdk);
+
+
+        $this->data['partnerSubscriptionMeta'] = $partnerSubscriptionMeta;
+
+        $this->data['featureSubscriptions'] = $subscription;
 
         return view('modules-dashboard::welcome.overview', $this->data);
         

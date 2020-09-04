@@ -11,10 +11,10 @@ class ModulesDashboardServiceProvider extends ServiceProvider {
 		$this->loadViewsFrom(__DIR__.'/resources/views', 'modules-dashboard');
 		$this->publishes([
 			__DIR__.'/config/modules-dashboard.php' => config_path('modules-dashboard.php'),
-		], 'config');
+		], 'dorcas-modules');
 		/*$this->publishes([
 			__DIR__.'/assets' => public_path('vendor/modules-dashboard')
-		], 'public');*/
+		], 'dorcas-modules');*/
 	}
 
 	public function register()
