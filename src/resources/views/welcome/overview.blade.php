@@ -41,7 +41,7 @@
         	@if ( count($assistantModules) > 0 )
 	            <div class="row">
 
-					<form id="form-welcome-features" action="{{ route('save-dashboard-features') }}" method="post" v-on:submit.prevent="submitWelcomeFeatures">
+					<form id="form-welcome-features" action="{{ route('save-dashboard-features2') }}" method="post" v-on:submit.prevent="submitWelcomeFeatures">
 			            <!--/dashboard/features-->
 						<div class="form-group">
 			            	<div>
