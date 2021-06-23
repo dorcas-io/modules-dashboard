@@ -109,7 +109,7 @@
             data: {
                 applications: [],
                 meta: [],
-                authorization_token: '{{ $authToken or '' }}',
+                authorization_token: '{{ $authToken ?? '' }}',
                 stats: {!! json_encode(!empty($stats) ? $stats : []) !!},
                 message: '{{ $message }}',
                 dashboard_message: { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' },

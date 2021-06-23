@@ -87,7 +87,9 @@ class ModulesDashboardController extends Controller {
         $this->data['isConfigured'] = true;
         if (empty($userUiSetup)) {
             # user's UI is not configured
-            $this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
+            //$this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
+            $this->data['isFirstConfiguration'] = empty($configurations['ui_setup']["customers"]);
+            # use missing base customers modules as a check of first time
             if ($request->has('show_ui_wizard')) {
                 $this->data['isConfigured'] = false;
             } else {
