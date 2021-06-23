@@ -47,7 +47,7 @@
 			            	<div>
 			            		<h4>Features List</h4>
 			            		<p>
-			            			<em>A tick mark is shown on features that are currently selected and active. If a feature is not enabled, you can always select it to activate or try it out!</em>
+			            			<em>A tick mark is shown on features that are currently selected and active. If a feature is not enabled, you can always select it to activate or try it out.</em>
 			            		</p>
 			            	</div>
 			            	<div class="row gutters-sm">
