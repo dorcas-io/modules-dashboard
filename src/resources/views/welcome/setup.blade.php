@@ -192,7 +192,6 @@
                     this.businessConfiguration = this.business.extra_data;
                 }
                 console.log(this.isConfigured);
-
             },
             methods: {
                 /*isConfigured: function() {

@@ -58,6 +58,7 @@ class ModulesDashboardController extends Controller {
         ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
+        ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => true, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
         ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
     ];
 
