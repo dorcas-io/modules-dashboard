@@ -41,8 +41,8 @@
         	@if ( count($assistantModules) > 0 )
 	            <div class="row">
 
-					<form id="form-welcome-features" action="{{ route('save-dashboard-features2') }}" method="post" v-on:submit.prevent="submitWelcomeFeatures">
-			            <!--/dashboard/features-->
+					<form id="form-welcome-features" action="/dashboard/features" method="post" v-on:submit.prevent="submitWelcomeFeatures">
+			            <!--/dashboard/features {{ route('save-dashboard-features2') }}-->
 						<div class="form-group">
 			            	<div>
 			            		<h4>Features List</h4>
@@ -189,7 +189,7 @@
                         //console.log(response);
                         context.submittingSetup = false;
                         //Materialize.toast('Group added.', 3000);
-                        window.location = '{{ route("welcome-overview")."?fromsetup" }}'
+                        window.location = '{{ route("dashboard")."?fromsetup" }}'
                         return swal("Great!", "We've saved your feature selection", "success");
                     })
                         .catch(function (error) {
