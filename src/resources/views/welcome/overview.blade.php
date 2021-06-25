@@ -183,7 +183,7 @@
                     }
                     //console.log(formValues)
 
-                    axios.post('{{ route("dashboard/features") }}', formValues)
+                    axios.post('{{ route("save-dashboard-features") }}', formValues)
                     .then(function (response) {
                         //console.log(response);
                         context.submittingSetup = false;
