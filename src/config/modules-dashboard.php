@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Business Dashboard'
+    'title' => 'Business Dashboard2'
 ];
