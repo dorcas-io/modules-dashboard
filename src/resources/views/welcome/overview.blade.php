@@ -42,7 +42,6 @@
 	            <div class="row">
 
 					<form id="form-welcome-features" action="/dashboard/features" method="post" v-on:submit.prevent="submitWelcomeFeatures">
-			            <!--/dashboard/features {{ route('save-dashboard-features2') }}-->
 						<div class="form-group">
 			            	<div>
 			            		<h4>Features List</h4>
