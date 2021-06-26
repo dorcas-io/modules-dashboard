@@ -69,6 +69,7 @@
 				            					<img src="{{ $image }}" alt="}" class="imagecheck-image" width="250">
 				            				</figure>
 				            				<strong>{{ $field['name'] }}</strong><br/>
+											<!--
 				            				@if (!empty($field['enabled']))
 				            					@if (!empty($featureSubscriptions[$field_id]))
 				            						@php
@@ -76,11 +77,12 @@
 				            							$new_package_title = $featureSubscriptions[$field_id]["subscription_title"];
 				            						@endphp
 				            						{{ $featureSubscriptions[$field_id]["subscription_title"] }} Package | Expires <em>{{ Carbon\Carbon::parse($featureSubscriptions[$field_id]["expires"])->format('l jS F, Y') }}</em><br/>
-				            						<a href="#" v-on:click.prevent="upgradeShow('{{ $old_package_title }}')">Upgrade</a><!-- | <a href="#">Benefits</a>--><br/>
+				            						<a href="#" v-on:click.prevent="upgradeShow('{{ $old_package_title }}')">Upgrade</a> | <a href="#">Benefits</a><br/>
 				            						{{ implode(",", $featureSubscriptions[$field_id]["subscription"]) }}<br/>
 				            						{{ implode(",", $featureSubscriptions[$field_id]["subscriptions"]) }}
 				            					@endif
 				            				@endif
+											-->
 				            			</label>
 				            		</div>
 				            	@endforeach
