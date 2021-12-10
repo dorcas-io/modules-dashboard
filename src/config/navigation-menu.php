@@ -5,9 +5,9 @@ return [
     	'route' => 'welcome-setup',
         'icon' => 'fe fe-power'
     ],
-    'welcome-overview' => [
-        'title' => 'Features',
-        'route' => 'welcome-overview',
-        'icon' => 'fe fe-sliders'
-    ]
+    // 'welcome-overview' => [
+    //     'title' => 'Features',
+    //     'route' => 'welcome-overview',
+    //     'icon' => 'fe fe-sliders'
+    // ]
 ];

@@ -33,18 +33,6 @@ class ModulesDashboardController extends Controller {
     ];
     
     /** @var array  */
-    /*const SETUP_UI_COMPONENTS = [
-        ['name' => 'App Store', 'id' => 'appstore', 'enabled' => true, 'is_readonly' => false, 'path' => 'app-store'],
-        ['name' => 'Customers', 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/crm'],
-        ['name' => 'eCommerce', 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/ecommerce'],
-        ['name' => 'Finance', 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/finance'],
-        ['name' => 'Integrations', 'id' => 'integrations', 'enabled' => true, 'is_readonly' => false, 'path' => 'integrations'],
-        ['name' => 'People', 'id' => 'organisation', 'enabled' => true, 'is_readonly' => false, 'path' => 'apps/people'],
-        ['name' => 'Sales', 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => ['apps/inventory', 'apps/invoicing']],
-        ['name' => 'Settings', 'id' => 'settings', 'enabled' => true, 'is_readonly' => false, 'path' => 'settings'],
-        ['name' => 'Professional Services', 'id' => 'services', 'enabled' => true, 'is_readonly' => true],
-        ['name' => 'Product Vendors', 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true],
-    ];*/
 
     const SETUP_UI_COMPONENTS = [
         ['name' => 'Dashboard', 'base' => true, 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => true, 'path' => 'dashboard', 'children' => []],
@@ -83,20 +71,25 @@ class ModulesDashboardController extends Controller {
         $viewMode = $request->session()->get('viewMode', null);
         # get the current view mode
         $userConfigurations = (array) $request->user()->extra_configurations;
-        $userUiSetup = $userConfigurations['ui_setup'] ?? [];
         $configurations = (array) $company->extra_data;
+        $userUiSetup = $userConfigurations['ui_setup'] ?? [];
+        $companySetup = $configurations['first_time'] ?? 0;
         $this->data['isConfigured'] = true;
-        if (empty($userUiSetup)) {
+        if (empty($companySetup)) { //&& empty($userUiSetup) - we use elsewhere
             # user's UI is not configured
+
             //$this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
-            $this->data['isFirstConfiguration'] = isset($configurations['ui_setup']["customers"]);
-            # use missing base customers modules as a check of first time
-            if ($request->has('show_ui_wizard')) {
-                $this->data['isConfigured'] = false;
-            } else {
-                $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
-            }
+            $this->data['isFirstConfiguration'] = empty($ScompanySetup);
+            # use missing first_time value as check
+
+            // if ($request->has('show_ui_wizard')) {
+            //     $this->data['isConfigured'] = false;
+            // } else {
+            //     $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
+            // }
             # check if the UI has been configured
+            $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
+
             $currentUiSetup = $configurations['ui_setup'] ?? [];
             $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
@@ -108,16 +101,17 @@ class ModulesDashboardController extends Controller {
                 $field['enabled'] = in_array($field['id'], $currentUiSetup);
                 return $field;
             });
-            # add the UI components
+            # add the UI components from company settings
         }
-        $this->data['countries'] = $countries = $this->getCountries($sdk);
-        # get the countries listing
-        $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
-        # get the nigeria country model
-        if (!empty($nigeria)) {
-            $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
-            # get the states
-        }
+        // $this->data['countries'] = $countries = $this->getCountries($sdk);
+        
+        // # get the countries listing
+        // $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
+        // # get the nigeria country model
+        // if (!empty($nigeria)) {
+        //     $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
+        //     # get the states
+        // }
 
 
         $dorcasUser = $request->user();
@@ -315,7 +309,6 @@ class ModulesDashboardController extends Controller {
      */
     public function welcome_post(Request $request, Sdk $sdk)
     {
-        //dd($request);
         $this->validate($request, [
             'business_name' => 'required|string|max:80',
             'business_type' => 'required|string|max:80',
@@ -360,6 +353,7 @@ class ModulesDashboardController extends Controller {
             $configurations['state_id'] = $request->input('business_state');
             $configurations['currency'] = strtoupper($request->input('currency', 'NGN'));
             $configurations['ui_setup'] = $selectedApps->unique()->all();
+            $configurations['first_time'] = 1;
             
             $query = $sdk->createCompanyService()->addBodyParam('name', $request->business_name, true)
                                                 ->addBodyParam('extra_data', $configurations)
@@ -368,24 +362,24 @@ class ModulesDashboardController extends Controller {
 
             //Cache::forget('business.employees.'.$company->id);                                     
 
-                                                //dd($query);
             # send the request
             if (!$query->isSuccessful()) {
                 throw new \RuntimeException('Failed while updating your business information. Please try again.');
             }
-            //$message = ['Successfully updated business information for '.$request->name];
-            //$response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
+            $message = 'Successfully updated business information for '.$request->business_name;
+            $response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
         } catch (ServerException $e) {
-            //$message = json_decode((string) $e->getResponse()->getBody(), true);
-            //$response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
-            throw new \RuntimeException($message['message']);
+            $message = json_decode((string) $e->getResponse()->getBody(), true);
+            $response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            //throw new \RuntimeException($message['message']);
         } catch (\Exception $e) {
-            //$response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
-            //return redirect(url()->current())->with('UiResponse', $response);
-            throw new \RuntimeException($e->getMessage());
+            $response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            return redirect(url()->current())->with('UiResponse', $response);
+            //throw new \RuntimeException($e->getMessage());
         }
         //return redirect(url()->current())->with('UiResponse', $response);
-        return response()->json($query->getData());
+        return redirect(route('dashboard'));
+        //return response()->json($query->getData());
 
     }
 
@@ -664,11 +658,6 @@ class ModulesDashboardController extends Controller {
             }
         }
 
-        /*if (!$this->data['isConfigured']) {
-            return view('modules-dashboard::welcome.setup', $this->data);
-        } else {
-            return redirect(route('dashboard'));
-        }*/
         return view('modules-dashboard::welcome.setup', $this->data);
     }
 

@@ -26,7 +26,7 @@
 					  <div class="btn-list">
 					    <button class="btn btn-success" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
                         @if ($isConfigured)
-                            <a v-if="isConfigured" class="btn btn-secondary" href="{{ route('welcome-overview') }}">Explore Features</a>
+                            <!-- <a v-if="isConfigured" class="btn btn-secondary" href="{{ route('welcome-overview') }}">Explore Features</a> -->
                             <button v-if="isConfigured" class="btn btn-primary d-none d-md-inline" type="button" v-on:click.prevent="startHubTour"><i class="fa fa-hand-o-right mr-2"></i> Take A Tour</button>
                             <a v-if="isConfigured" class="btn btn-primary" href="{{ route('dashboard') }}"><i class="fa fa-home mr-2"></i>Go to Dashboard</a>
                         @endif
@@ -44,8 +44,8 @@
 				<p>
 					Before we go further, please provide the following information to help us customize better and get the platform all setup for you
 				</p>
-				<form id="form-welcome-setup" action="/dashboard/setup" method="post" v-on:submit.prevent="submitWelcomeSetup">
-
+				<form id="form-welcome-setup" action="{{ route('welcome-setup-post') }}" method="post"> <!-- v-on:submit.prevent="submitWelcomeSetup"-->
+                    @csrf
                     <div class="row">
                         <div class="form-group col-sm-12 col-md-12">
                             <input placeholder="Business Name" id="business_name" name="business_name" type="text"
@@ -138,7 +138,7 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4 d-none">
+                    <div class="row mt-4"> <!--  d-none -->
                         <div class="col-sm-12 col-md-12">
                             <p class="text-uppercase">
                                 Select all <strong>Hub modules</strong> would you like to activate
@@ -191,7 +191,7 @@
                 if (typeof this.business.extra_data !== 'undefined' && this.business.extra_data !== null) {
                     this.businessConfiguration = this.business.extra_data;
                 }
-                console.log(this.isConfigured);
+                //console.log(this.isConfigured);
             },
             methods: {
                 /*isConfigured: function() {
@@ -243,7 +243,7 @@
                     .then(function (response) {
                         //console.log(response);
                         context.submittingSetup = false;
-                        //Materialize.toast('Group added.', 3000);
+                        
                         window.location = '{{ route("welcome-overview")."?fromsetup" }}'
                         return swal("Great!", "Thanks for providing the information", "success");
                     })
