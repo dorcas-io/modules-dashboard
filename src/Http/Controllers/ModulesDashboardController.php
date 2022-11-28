@@ -309,6 +309,7 @@ class ModulesDashboardController extends Controller {
      */
     public function welcome_post(Request $request, Sdk $sdk)
     {
+    
         $this->validate($request, [
             'business_name' => 'required|string|max:80',
             'business_type' => 'required|string|max:80',
