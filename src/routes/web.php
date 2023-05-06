@@ -7,6 +7,7 @@ Route::group(['namespace' => 'Dorcas\ModulesDashboard\Http\Controllers', 'prefix
 	Route::post('/features', 'ModulesDashboardController@welcome_features')->name('save-dashboard-features');
 	Route::get('/overview', 'ModulesDashboardController@welcome_overview')->name('welcome-overview');
 	Route::post('/resend-verification', 'ModulesDashboardController@resendVerification');
+	Route::get('/faqs', 'ModulesDashboardController@faqs');
 });
 
 ?>

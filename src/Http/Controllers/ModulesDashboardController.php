@@ -740,5 +740,13 @@ class ModulesDashboardController extends Controller {
         return response()->json($query->getData());
     }
 
+    public function faqs(){
+        $this->data = [
+            'page' => ['title' => 'Frequently Asked Quenstions ?'],
+            'header' => ['title' => 'Frequently Asked Quenstions ?'],
+            'selectedMenu' => 'modules-dashboard'
+        ];
+        return view('modules-dashboard::faqs', $this->data);
+    }
 
 }
