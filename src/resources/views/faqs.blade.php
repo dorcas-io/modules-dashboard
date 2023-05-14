@@ -85,7 +85,7 @@
 
 <div class="accordion-body">
     <div class="accordion">
-        <h1>Frequently Asked Questions</h1>
+{{--        <h1>Frequently Asked Questions</h1>--}}
         <hr>
         <div class="container">
             <div class="label">About Dorcas ?</div>
