@@ -85,7 +85,10 @@
 
 <div class="accordion-body">
     <div class="accordion">
-{{--        <h1>Frequently Asked Questions</h1>--}}
+        <h1>
+            <p>Reach Us through email ?</p>
+            <a href="mailto:zaccheausolawuyi@gmail.com" class="btn btn-success">Send Email</a>
+        </h1>
         <hr>
         <div class="container">
             <div class="label">About Dorcas ?</div>
