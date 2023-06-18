@@ -16,7 +16,7 @@
             </div>
 
         </div>
-        <div class="row" v-if="!user.is_verified">
+        <div class="row">
             <div class="col s12">
                 @if(count($bank_accounts) < 1)
                     <div class="alert-danger alert mb-0">
