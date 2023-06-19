@@ -63,8 +63,12 @@ class ModulesDashboardController extends Controller {
 
     public function business(Request $request, Sdk $sdk)
     {
+
+
         $this->setViewUiResponse($request);
         $company = $request->user()->company(true, true);
+
+
         # get the company
         $this->data['message'] = $request->query('message');
         # a message in the URL
@@ -72,8 +76,11 @@ class ModulesDashboardController extends Controller {
         # get the current view mode
         $userConfigurations = (array) $request->user()->extra_configurations;
         $configurations = (array) $company->extra_data;
+
+
         $userUiSetup = $userConfigurations['ui_setup'] ?? [];
         $companySetup = $configurations['first_time'] ?? 0;
+
         $this->data['isConfigured'] = true;
         if (empty($companySetup)) {
             # user's UI is not configured
@@ -84,6 +91,8 @@ class ModulesDashboardController extends Controller {
             $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
 
             $currentUiSetup = $configurations['ui_setup'] ?? [];
+
+
             $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
@@ -99,6 +108,8 @@ class ModulesDashboardController extends Controller {
 
 
         $dorcasUser = $request->user();
+
+
         if (!empty($dorcasUser)) {
             if (!empty($dorcasUser->partner) && !empty($dorcasUser->partner['data'])) {
                 $partner = (object) $dorcasUser->partner['data'];
@@ -285,6 +296,8 @@ class ModulesDashboardController extends Controller {
         }
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
+        $this->data['bank_accounts'] = $company->bank_accounts;
+
         return view($template, $this->data);
     }
     
@@ -297,6 +310,7 @@ class ModulesDashboardController extends Controller {
      */
     public function welcome_post(Request $request, Sdk $sdk)
     {
+    
         $this->validate($request, [
             'business_name' => 'required|string|max:80',
             'business_type' => 'required|string|max:80',
@@ -721,6 +735,7 @@ class ModulesDashboardController extends Controller {
             }
             # check if the UI has been configured
             $currentUiSetup = $configurations['ui_setup'] ?? [];
+
             $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
@@ -731,6 +746,7 @@ class ModulesDashboardController extends Controller {
                 $field['enabled'] = in_array($field['id'], $currentUiSetup);
                 return $field;
             });
+
             # add the UI components
         }
         $this->data['countries'] = $countries = $this->getCountries($sdk);
@@ -833,5 +849,13 @@ class ModulesDashboardController extends Controller {
         return response()->json($query->getData());
     }
 
+    public function faqs(){
+        $this->data = [
+            'page' => ['title' => 'Frequently Asked Quenstions ?'],
+            'header' => ['title' => 'Frequently Asked Quenstions ?'],
+            'selectedMenu' => 'modules-dashboard'
+        ];
+        return view('modules-dashboard::faqs', $this->data);
+    }
 
 }

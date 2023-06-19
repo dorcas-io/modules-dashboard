@@ -14,7 +14,24 @@
                     @endslot
                 @endcomponent
             </div>
+
         </div>
+        <div class="row">
+            <div class="col s12">
+                @if(count($bank_accounts) <  0)
+                    <div class="alert-danger alert mb-0">
+                        <div class="d-flex align-items-center alert-danger">
+                            <div class="flex-fill ms-3 text-truncate">
+                                <h4>Business Bank Details Yet To be Added</h4>
+                                <span class="small">The Business is yet to add Bank Details ,Payment can not be processed</span><br><br>
+                                <a href="{{url('mse/settings-banking')}}" class="btn btn-danger">Add Bank Details</a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <br>
         <div class="row">
                 @include('layouts.blocks.tabler.alert')
         </div>
