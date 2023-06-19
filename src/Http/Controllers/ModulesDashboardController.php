@@ -38,11 +38,11 @@ class ModulesDashboardController extends Controller {
         ['name' => 'Dashboard', 'base' => true, 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => true, 'path' => 'dashboard', 'children' => []],
         ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => true, 'path' => 'mcu', 'children' => []],
         ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => true, 'path' => 'mec', 'children' => []],
-        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => true, 'is_readonly' => true, 'path' => 'mpe', 'children' => []],
-        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => true, 'is_readonly' => true, 'path' => 'mfn', 'children' => []],
+        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => false, 'is_readonly' => true, 'path' => 'mpe', 'children' => []],
+        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => false, 'is_readonly' => true, 'path' => 'mfn', 'children' => []],
         ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => true, 'path' => 'msl', 'children' => []],
-        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => true, 'is_readonly' => true, 'path' => 'mop', 'children' => []],
-        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
+        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => false, 'is_readonly' => true, 'path' => 'mop', 'children' => []],
+        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => false, 'is_readonly' => true, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
         //['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
@@ -119,7 +119,8 @@ class ModulesDashboardController extends Controller {
         }
 
         if (!$this->data['isConfigured']) {
-            if ( env('SETTINGS_DASHBOARD_AUTOSETUP', 'no') == 'yes' ) {
+            $autosetup = env('SETTINGS_DASHBOARD_AUTOSETUP', 'no');
+            if ( $autosetup  == 'yes' ) {
                 $this->auto_setup($request, $sdk);
             } else {
                 return redirect(route('welcome-setup'));
@@ -389,18 +390,11 @@ class ModulesDashboardController extends Controller {
 
     private function auto_setup(Request $request, Sdk $sdk)
     {
-        $this->validate($request, [
-            'business_name' => 'required|string|max:80',
-            'business_type' => 'required|string|max:80',
-            'business_sector' => 'required|string|max:80',
-            'business_size' => 'required|string|max:80',
-            'business_country' => 'required|string|max:80',
-            'business_state' => 'nullable|string|max:80',
-            'currency' => 'nullable|string|size:3'
-        ]);
-        
+        $company = $this->getCompany();
+        # get the company
         
         // Determine Default Values
+        $business_name = $company->name;
         $business_type = "";
         $business_size = "";
         $business_sector = "";
@@ -413,23 +407,24 @@ class ModulesDashboardController extends Controller {
 
         $business_country = $countryId;
         $business_state = "";
-        $currency = env('SETTINGS_COUNTRY', 'NG');
+        $currency = env('SETTINGS_CURRENCY', 'NGN');
 
         $selected_apps = [
             "customers",
             "ecommerce",
-            "sales",
-            //"people",
-            //"finance",
-            //"operations"
+            "sales"
         ];
+
+        /**
+        * a lot can be controlled at self::SETUP_UI_COMPONENTS
+        * readoly means uneditable in UI
+        * enbled means not showig
+        */
+
+        $selected_apps = ["customers", "ecommerce", "sales"];
         # choose which modules to activate
 
 
-
-        # validate the request
-        $company = $this->getCompany();
-        # get the company
         $configurations = (array) $company->extra_data;
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
@@ -452,7 +447,7 @@ class ModulesDashboardController extends Controller {
         });
         # remove them
 
-       $autoInstalledApps =  $selectedApps->unique()->all();
+       $autoInstalledApps =  $selectedApps->unique()->values()->all();
         
         try {
             $configurations['business_type'] = $business_type;
@@ -465,7 +460,7 @@ class ModulesDashboardController extends Controller {
             $configurations['ui_setup'] = $autoInstalledApps;
             $configurations['first_time'] = 1;
             
-            $query = $sdk->createCompanyService()->addBodyParam('name', $request->business_name, true)
+            $query = $sdk->createCompanyService()->addBodyParam('name', $business_name, true)
                                                 ->addBodyParam('extra_data', $configurations)
                                                 ->send('PUT');                                  
 
@@ -473,7 +468,7 @@ class ModulesDashboardController extends Controller {
             if (!$query->isSuccessful()) {
                 throw new \RuntimeException('Failed while updating your business information. Please try again.');
             }
-            $message = 'Successfully setup business information for ' . $request->business_name;
+            $message = 'Successfully setup business information for ' . $business_name;
             $response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
         } catch (ServerException $e) {
             $message = json_decode((string) $e->getResponse()->getBody(), true);
