@@ -36,13 +36,13 @@ class ModulesDashboardController extends Controller {
 
     const SETUP_UI_COMPONENTS = [
         ['name' => 'Dashboard', 'base' => true, 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => true, 'path' => 'dashboard', 'children' => []],
-        ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'mcu', 'children' => []],
-        ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'mec', 'children' => []],
-        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => true, 'is_readonly' => false, 'path' => 'mpe', 'children' => []],
-        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'mfn', 'children' => []],
-        ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => 'msl', 'children' => []],
-        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => true, 'is_readonly' => false, 'path' => 'mop', 'children' => []],
-        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => false, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
+        ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => true, 'path' => 'mcu', 'children' => []],
+        ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => true, 'path' => 'mec', 'children' => []],
+        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => true, 'is_readonly' => true, 'path' => 'mpe', 'children' => []],
+        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => true, 'is_readonly' => true, 'path' => 'mfn', 'children' => []],
+        ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => true, 'path' => 'msl', 'children' => []],
+        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => true, 'is_readonly' => true, 'path' => 'mop', 'children' => []],
+        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
         //['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
@@ -75,19 +75,12 @@ class ModulesDashboardController extends Controller {
         $userUiSetup = $userConfigurations['ui_setup'] ?? [];
         $companySetup = $configurations['first_time'] ?? 0;
         $this->data['isConfigured'] = true;
-        if (empty($companySetup)) { //&& empty($userUiSetup) - we use elsewhere
+        if (empty($companySetup)) {
             # user's UI is not configured
 
-            //$this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
             $this->data['isFirstConfiguration'] = empty($ScompanySetup);
             # use missing first_time value as check
 
-            // if ($request->has('show_ui_wizard')) {
-            //     $this->data['isConfigured'] = false;
-            // } else {
-            //     $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
-            // }
-            # check if the UI has been configured
             $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
 
             $currentUiSetup = $configurations['ui_setup'] ?? [];
@@ -103,15 +96,6 @@ class ModulesDashboardController extends Controller {
             });
             # add the UI components from company settings
         }
-        // $this->data['countries'] = $countries = $this->getCountries($sdk);
-        
-        // # get the countries listing
-        // $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
-        // # get the nigeria country model
-        // if (!empty($nigeria)) {
-        //     $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
-        //     # get the states
-        // }
 
 
         $dorcasUser = $request->user();
@@ -124,7 +108,11 @@ class ModulesDashboardController extends Controller {
         }
 
         if (!$this->data['isConfigured']) {
-            return redirect(route('welcome-setup'));
+            if ( env('SETTINGS_DASHBOARD_AUTOSETUP', 'no') == 'yes' ) {
+                $this->auto_setup($request, $sdk);
+            } else {
+                return redirect(route('welcome-setup'));
+            }
         }
         # first time users
 
@@ -382,6 +370,112 @@ class ModulesDashboardController extends Controller {
         //return response()->json($query->getData());
 
     }
+
+    
+
+    private function auto_setup(Request $request, Sdk $sdk)
+    {
+        $this->validate($request, [
+            'business_name' => 'required|string|max:80',
+            'business_type' => 'required|string|max:80',
+            'business_sector' => 'required|string|max:80',
+            'business_size' => 'required|string|max:80',
+            'business_country' => 'required|string|max:80',
+            'business_state' => 'nullable|string|max:80',
+            'currency' => 'nullable|string|size:3'
+        ]);
+        
+        
+        // Determine Default Values
+        $business_type = "";
+        $business_size = "";
+        $business_sector = "";
+        
+        $countries = $this->getCountries($sdk);
+        $countryCode = env('SETTINGS_COUNTRY', 'NG') == 2 ? env('SETTINGS_COUNTRY', 'NG') : 'NG';
+        $country = $countries->where('iso_code', $countryCode)->first();
+        $defaultCountry = $countries->where('iso_code', 'NG')->first();
+        $countryId = !empty($countryId) ? $country->id : $defaultCountry->id;
+
+        $business_country = $countryId;
+        $business_state = "";
+        $currency = env('SETTINGS_COUNTRY', 'NG');
+
+        $selected_apps = [
+            "customers",
+            "ecommerce",
+            "sales",
+            //"people",
+            //"finance",
+            //"operations"
+        ];
+        # choose which modules to activate
+
+
+
+        # validate the request
+        $company = $this->getCompany();
+        # get the company
+        $configurations = (array) $company->extra_data;
+        $this->data['isConfigured'] = !empty($configurations['ui_setup']);
+        
+        
+        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && !empty($field['enabled']);
+        })->pluck('id');
+        # get the enabled-readonly values
+        
+        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && empty($field['enabled']);
+        })->pluck('id');
+        # get the disabled-readonly values
+        
+        $selectedApps = collect($selected_apps)->merge($readonlyExtend);
+        # set the selected apps
+        
+        $selectedApps = $selectedApps->filter(function ($id) use ($readonlyRemovals) {
+            return !$readonlyRemovals->contains($id);
+        });
+        # remove them
+
+       $autoInstalledApps =  $selectedApps->unique()->all();
+        
+        try {
+            $configurations['business_type'] = $business_type;
+            $configurations['business_size'] = $business_size;
+            $configurations['business_sector'] = $business_sector;
+            
+            $configurations['country_id'] = $business_country;
+            $configurations['state_id'] = $business_state;
+            $configurations['currency'] = strtoupper($currency);
+            $configurations['ui_setup'] = $autoInstalledApps;
+            $configurations['first_time'] = 1;
+            
+            $query = $sdk->createCompanyService()->addBodyParam('name', $request->business_name, true)
+                                                ->addBodyParam('extra_data', $configurations)
+                                                ->send('PUT');                                  
+
+            # send the request
+            if (!$query->isSuccessful()) {
+                throw new \RuntimeException('Failed while updating your business information. Please try again.');
+            }
+            $message = 'Successfully setup business information for ' . $request->business_name;
+            $response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
+        } catch (ServerException $e) {
+            $message = json_decode((string) $e->getResponse()->getBody(), true);
+            $response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            //throw new \RuntimeException($message['message']);
+        } catch (\Exception $e) {
+            $response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            return redirect(url()->current())->with('UiResponse', $response);
+            //throw new \RuntimeException($e->getMessage());
+        }
+
+        return redirect(url()->current())->with('UiResponse', $response);
+        //return redirect(route('dashboard'));
+
+    }
+
 
 
     /**
