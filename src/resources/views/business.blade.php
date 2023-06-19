@@ -18,7 +18,7 @@
         </div>
         <div class="row">
             <div class="col s12">
-                @if(count($bank_accounts) < 1)
+                @if(count($bank_accounts) <  0)
                     <div class="alert-danger alert mb-0">
                         <div class="d-flex align-items-center alert-danger">
                             <div class="flex-fill ms-3 text-truncate">
