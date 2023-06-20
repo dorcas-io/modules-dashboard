@@ -137,12 +137,12 @@
                     <div class="card" style="height: 28rem">
                         <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                             <div class="divide-y">
-                                <div>
-                                    @foreach ($checklists as $checklist)
+                                @foreach ($checklists as $checklist)
+                                    <div>
                                         <div class="row">
                                             <div class="col-auto">
                                                 <span class="w-1 pe-0" style="vertical-align: middle;">
-                                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
+                                                    <input readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
                                                 </span>
                                             </div>
                                             <div class="col-auto">
@@ -152,7 +152,7 @@
                                                 <div class="text-truncate">
                                                     {{ $checklist['title'] }}
                                                 </div>
-                                                <div class="text-muted">{{ $checklist['description'] }}</div>
+                                                <div class="text-muted">{!! html_entity_decode($checklist['description']) !!}</div>
                                             </div>
                                             <div class="col-auto align-self-center">
                                                 <div class="badge bg-success"></div>
@@ -163,8 +163,8 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
