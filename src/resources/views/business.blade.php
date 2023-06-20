@@ -3,7 +3,7 @@
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
         <div class="row" v-if="!user.is_verified">
-            <div class="col s12">
+            <div class="col-6">
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -14,10 +14,7 @@
                     @endslot
                 @endcomponent
             </div>
-
-        </div>
-        <div class="row">
-            <div class="col s12">
+            <div class="col-6 s12">
                 @if(count($bank_accounts) <  0)
                     <div class="alert-danger alert mb-0">
                         <div class="d-flex align-items-center alert-danger">
@@ -59,6 +56,126 @@
 	  <span class="avatar" style="background-image: url({{ \Illuminate\Support\Facades\Auth::user()->photo }})"></span>
 	    <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
 	</div>
+
+    <div class="row row-cards row-deck" id="dashboard-new-user">
+        <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Welcome to the <em>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</em></h3>
+                </div>
+                <div class="card-body">
+                	<div id="welcome-message">
+                        Welcome! It appears you are new here. It's easy to start using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
+                        <br/></br>
+                        Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
+                        <br/></br>
+                        If you still need any help after that, you can:
+                        <ul>
+                            <li>View <a href="#" v-on:click.prevent="launchHelpCentre">Help Centre</a></li>
+                            <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
+                            <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-8" id="new-user-checklist">
+            
+            <div class="row">
+                <!-- Check List Header Starts -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-3">
+                                <img src="https://cdn.dribbble.com/users/844826/screenshots/14547977/media/e7749bd1b09d9415b8dc265a7dbe81f6.png" alt="Projects Dashboards" class="rounded">
+                            </div>
+                            <div class="col">
+                                <h3 class="card-title mb-1">
+                                    <a href="#" class="text-reset">Getting Started</a>
+                                </h3>
+                                <div class="text-muted">
+                                    Updated 2 hours ago
+                                </div>
+                                <div class="mt-3">
+                                    <div class="row g-2 align-items-center">
+                                        <div class="col-auto">
+                                            76%
+                                        </div>
+                                        <div class="col">
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar" style="width: 76%" role="progressbar" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100" aria-label="76% Complete">
+                                                    <span class="visually-hidden">76% Complete</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="dropdown">
+                                    <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="#" class="dropdown-item">Import</a>
+                                        <a href="#" class="dropdown-item">Export</a>
+                                        <a href="#" class="dropdown-item">Download</a>
+                                        <a href="#" class="dropdown-item text-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Check List Header Ends -->
+
+                <!-- Scrollable Checklist Starts -->
+                <div class="col-12">
+                    <div class="card" style="height: 28rem">
+                        <div class="card-body card-body-scrollable card-body-scrollable-shadow">
+                            <div class="divide-y">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <span class="w-1 pe-0">
+                                                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked >
+                                            </span>
+                                            <span class="avatar">1</span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-truncate">
+                                                Create you first <strong>product</strong>.
+                                            </div>
+                                            <div class="text-muted">so your customers have something to buy :-)</div>
+                                        </div>
+                                        <div class="col-auto align-self-center">
+                                            <div class="badge bg-success"></div>
+                                            <span class="dropdown">
+                                                <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">
+                                                        Action
+                                                    </a>
+                                                    <a class="dropdown-item" href="#">
+                                                        Another action
+                                                    </a>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Scrollable Checklist Ends -->
+
+            </div>
+
+        </div>
+        @include('modules-dashboard::modals.message')
+    </div>
 
     <div class="row row-cards row-deck" id="dashboard-data">
         <div class="col-sm-12 col-md-6">
@@ -135,7 +252,8 @@
                 business: {!! json_encode($business) !!},
                 subscription: {!! json_encode(!empty($plan) ? $plan : []) !!},
                 businessConfiguration: [],
-                apps_fetching: false
+                apps_fetching: false,
+                dashboardLink: {!! json_encode($dashboard_links) !!}
                 /*salesGraph: {!! json_encode($salesGraph) !!}*/
             },
             computed: {

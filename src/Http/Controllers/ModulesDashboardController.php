@@ -295,9 +295,29 @@ class ModulesDashboardController extends Controller {
             }
             $this->data['plan']['price'] = $plan['price_' . $company->plan_type]['raw'];
         }
+
+        // PROCESS USER DASHBOARD STATUS
+        $userDashboardStatus = [];
+
+        $userDashboardStatusKey = 'userDashboardStatus.' . $dorcasUser->id;
+
+        Cache::get($userDashboardStatusKey, [
+            'preferences' => [
+                'guide_needed' => true,
+            ]
+
+        ]);
+        
+
+        $
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
         $this->data['bank_accounts'] = $company->bank_accounts;
+
+        $this->data['dashboard_links'] = [
+            'documentation' => env('SETTINGS_DASHBOARD_DOCUMENTATION', 'https://docs.dorcas.io'),
+            'videos' => env('SETTINGS_DASHBOARD_VIDEOS', 'https://youtube.com'),
+        ];
 
         return view($template, $this->data);
     }
@@ -615,6 +635,28 @@ class ModulesDashboardController extends Controller {
     }
 
 
+
+    /**
+     * @param array $userStatus
+     *
+     * @return array
+     */
+    protected function processNewUserPanel(array $userDashboardStatus): array
+    {
+        $graph = [];
+        foreach ($metrics as $dateKey => $value) {
+            $date = Carbon::parse($dateKey);
+            $graph[] = [
+                'date' => $date->format('d M'),
+                'count' => $value['NGN']['count'] ?? 0,
+                'total' => $value['NGN']['total'] ?? 0
+            ];
+        }
+        return $graph;
+    }
+
+
+
     /**
      * @param array $metrics
      *
@@ -844,7 +886,7 @@ class ModulesDashboardController extends Controller {
         return response()->json($query->getData());
     }
 
-    public function faqs(){
+    public function faqs() {
         $this->data = [
             'page' => ['title' => 'Frequently Asked Quenstions ?'],
             'header' => ['title' => 'Frequently Asked Quenstions ?'],
