@@ -253,8 +253,8 @@
                 subscription: {!! json_encode(!empty($plan) ? $plan : []) !!},
                 businessConfiguration: [],
                 apps_fetching: false,
-                dashboardLink: {!! json_encode($dashboard_links) !!}
-                /*salesGraph: {!! json_encode($salesGraph) !!}*/
+                dashboardLink: {!! json_encode($dashboard_links) !!},
+                userDashboardStatus: {!! json_encode($user_dashboard_status) !!},
             },
             computed: {
                 greeting: function () {
@@ -489,7 +489,6 @@
                     	colors: {!! json_encode($salesGraph["colors"]) !!},
                     	names: {!! json_encode($salesGraph["names"]) !!},
                     	axes: {!! json_encode($salesGraph["axes"]) !!},
-                    	userDashboardStatus: {!! json_encode($salesGraph["user_dashboard_status"]) !!},
                         
                     },
                     axis: {
