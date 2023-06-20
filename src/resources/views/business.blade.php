@@ -201,7 +201,9 @@
                                             </div>
                                             <div class="col">
                                                 <div class="text-truncate">
-                                                    {! !$checklist['title'] !!}
+                                                    {!! $checklist['title'] !!}
+                                                    <br/>
+                                                    {!! html_entity_decode($checklist['title']) !!}
                                                 </div>
                                                 <div class="text-muted">{!! html_entity_decode($checklist['description']) !!}</div>
                                             </div>
