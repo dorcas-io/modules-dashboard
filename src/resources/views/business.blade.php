@@ -138,28 +138,28 @@
                         <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                             <div class="divide-y">
                                 <div>
-                                    @foreach ($checklists as $checklistK => $checklistV)
+                                    @foreach ($checklists as $checklist)
                                         <div class="row">
                                             <div class="col-auto">
-                                                <span class="w-1 pe-0">
-                                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked >
+                                                <span class="w-1 pe-0" style="vertical-align: middle;">
+                                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
                                                 </span>
                                             </div>
                                             <div class="col-auto">
-                                                <span class="avatar">{{ $checklistK }}</span>
+                                                <span class="avatar">{{ $checklist['index'] }}</span>
                                             </div>
                                             <div class="col">
                                                 <div class="text-truncate">
-                                                    {{ $checklistV['title'] }}
+                                                    {{ $checklist['title'] }}
                                                 </div>
-                                                <div class="text-muted">{!! $checklistV['description'] !!}</div>
+                                                <div class="text-muted">{{ $checklist['description'] }}</div>
                                             </div>
                                             <div class="col-auto align-self-center">
                                                 <div class="badge bg-success"></div>
                                             </div>
                                             <div class="col-auto align-self-center">
-                                                <a href="{{ $checklistV['button_path'] }}" class="btn btn-light btn-square w-100">
-                                                    {{ $checklistV['button_title'] }}
+                                                <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
+                                                    {{ $checklist['button_title'] }}
                                                 </a>
                                             </div>
                                         </div>
