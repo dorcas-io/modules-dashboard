@@ -45,7 +45,17 @@
         letter-spacing: .04em;
         vertical-align: bottom;
     }
-
+    .visually-hidden, .visually-hidden-focusable:not(:focus):not(:focus-within) {
+        position: absolute!important;
+        width: 1px!important;
+        height: 1px!important;
+        padding: 0!important;
+        margin: -1px!important;
+        overflow: hidden!important;
+        clip: rect(0,0,0,0)!important;
+        white-space: nowrap!important;
+        border: 0!important;
+    }
 </style>
 @endsection
 
@@ -151,12 +161,12 @@
                                     <div class="mt-3">
                                         <div class="row g-2 align-items-center">
                                             <div class="col-auto">
-                                                76%
+                                                {{ $checklists['score'] }}%
                                             </div>
                                             <div class="col">
                                                 <div class="progress progress-sm">
-                                                    <div class="progress-bar" style="width: 76%" role="progressbar" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100" aria-label="76% Complete">
-                                                        <span class="visually-hidden">76% Complete</span>
+                                                    <div class="progress-bar" style="width: {{ $checklists['score'] }}%" role="progressbar" aria-valuenow="{{ $checklists['score'] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ $checklists['score'] }}% Complete">
+                                                        <span class="visually-hidden">{{ $checklists['score'] }}% Complete</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -188,7 +198,7 @@
                     <div class="card" style="height: 28rem">
                         <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                             <div class="divide-y">
-                                @foreach ($checklists as $checklist)
+                                @foreach ($checklists['checklists'] as $checklist)
                                     <div>
                                         <div class="row">
                                             <div class="col-auto" style="vertical-align: middle;">
@@ -202,18 +212,16 @@
                                             <div class="col">
                                                 <div class="text-truncate">
                                                     {!! $checklist['title'] !!}
-                                                    <br/>
-                                                    {!! html_entity_decode($checklist['title']) !!}
                                                 </div>
-                                                <div class="text-muted">{!! html_entity_decode($checklist['description']) !!}</div>
-                                            </div>
-                                            <div class="col align-self-center">
-                                                <div class="badge bg-success"></div>
+                                                <div class="text-muted">{!! ($checklist['description']) !!}</div>
                                             </div>
                                             <div class="col align-self-center">
                                                 <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
                                                     {{ $checklist['button_title'] }}
                                                 </a>
+                                            </div>
+                                            <div class="col-auto align-self-center">
+                                                <div class="badge bg-success"></div>
                                             </div>
                                         </div>
                                     </div>

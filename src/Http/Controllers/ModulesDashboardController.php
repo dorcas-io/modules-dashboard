@@ -56,6 +56,7 @@ class ModulesDashboardController extends Controller {
             "description" => "so your customers have something to buy :-)",
             "button_title" => "Create Product",
             "button_path" => "/",
+            "status" => true
         ],
         "setup_bank_account" => [
             "title" => "Setup your <strong>bank account</strong>",
@@ -342,7 +343,17 @@ class ModulesDashboardController extends Controller {
 
         $checklists = $this->processChecklists($user_dashboard_status);
 
-        $this->data['checklists'] = $checklists;
+        $completion = 0;
+        foreach ($checklists as $cKey => $cValue) {
+            $completion += !empty($cValue['status']) ? 1 : 0;
+        }
+
+        $this->data['checklists'] = [
+            'checklists' => $checklists,
+            "meta" => [
+                "score" => floor( ($completion / count($checklists)) * 100 )
+            ]
+        ];
         
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
