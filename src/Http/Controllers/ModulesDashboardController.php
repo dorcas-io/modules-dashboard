@@ -301,15 +301,14 @@ class ModulesDashboardController extends Controller {
 
         $userDashboardStatusKey = 'userDashboardStatus.' . $dorcasUser->id;
 
-        Cache::get($userDashboardStatusKey, [
+        $user_dashboard_status = Cache::get($userDashboardStatusKey, [
             'preferences' => [
                 'guide_needed' => true,
             ]
-
         ]);
         
 
-        $
+        $this->data['user_dashboard_status'] = $user_dashboard_status;
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
         $this->data['bank_accounts'] = $company->bank_accounts;
