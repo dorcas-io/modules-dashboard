@@ -161,12 +161,12 @@
                                     <div class="mt-3">
                                         <div class="row g-2 align-items-center">
                                             <div class="col-auto">
-                                                {{ $checklists['score'] }}%
+                                                {{ $checklists['meta']['score'] }}%
                                             </div>
                                             <div class="col">
                                                 <div class="progress progress-sm">
-                                                    <div class="progress-bar" style="width: {{ $checklists['score'] }}%" role="progressbar" aria-valuenow="{{ $checklists['score'] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ $checklists['score'] }}% Complete">
-                                                        <span class="visually-hidden">{{ $checklists['score'] }}% Complete</span>
+                                                    <div class="progress-bar" style="width: {{ $checklists['meta']['score'] }}%" role="progressbar" aria-valuenow="{{ $checklists['meta']['score'] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ $checklists['meta']['score'] }}% Complete">
+                                                        <span class="visually-hidden">{{ $checklists['meta']['score'] }}% Complete</span>
                                                     </div>
                                                 </div>
                                             </div>
