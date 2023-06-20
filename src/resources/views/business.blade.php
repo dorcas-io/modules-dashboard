@@ -3,7 +3,7 @@
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
         <div class="row" v-if="!user.is_verified">
-            <div class="col-6">
+            <div class="col-sm-12 col-md-6">
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -14,7 +14,7 @@
                     @endslot
                 @endcomponent
             </div>
-            <div class="col-6 s12">
+            <div class="col-sm-12 col-md-6">
                 @if(count($bank_accounts) <  0)
                     <div class="alert-danger alert mb-0">
                         <div class="d-flex align-items-center alert-danger">
@@ -57,7 +57,7 @@
 	    <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
 	</div>
 
-    <div class="row row-cards row-deck" id="dashboard-new-user">
+    <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed">
         <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
             <div class="card">
                 <div class="card-header">
@@ -81,47 +81,49 @@
         </div>
         <div class="col-sm-12 col-md-6 col-lg-8" id="new-user-checklist">
             
-            <div class="row">
+            <div class="row ">
                 <!-- Check List Header Starts -->
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <img src="https://cdn.dribbble.com/users/844826/screenshots/14547977/media/e7749bd1b09d9415b8dc265a7dbe81f6.png" alt="Projects Dashboards" class="rounded">
-                            </div>
-                            <div class="col">
-                                <h3 class="card-title mb-1">
-                                    <a href="#" class="text-reset">Getting Started</a>
-                                </h3>
-                                <div class="text-muted">
-                                    Updated 2 hours ago
+                <div class="col-12">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-3">
+                                    <img src="https://cdn.dribbble.com/users/844826/screenshots/14547977/media/e7749bd1b09d9415b8dc265a7dbe81f6.png" alt="Projects Dashboards" class="rounded">
                                 </div>
-                                <div class="mt-3">
-                                    <div class="row g-2 align-items-center">
-                                        <div class="col-auto">
-                                            76%
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar" style="width: 76%" role="progressbar" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100" aria-label="76% Complete">
-                                                    <span class="visually-hidden">76% Complete</span>
+                                <div class="col">
+                                    <h3 class="card-title mb-1">
+                                        <a href="#" class="text-reset">Getting Started Checklist</a>
+                                    </h3>
+                                    <div class="text-muted">
+                                        Updated 2 hours ago
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="row g-2 align-items-center">
+                                            <div class="col-auto">
+                                                76%
+                                            </div>
+                                            <div class="col">
+                                                <div class="progress progress-sm">
+                                                    <div class="progress-bar" style="width: 76%" role="progressbar" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100" aria-label="76% Complete">
+                                                        <span class="visually-hidden">76% Complete</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="dropdown">
-                                    <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="#" class="dropdown-item">Import</a>
-                                        <a href="#" class="dropdown-item">Export</a>
-                                        <a href="#" class="dropdown-item">Download</a>
-                                        <a href="#" class="dropdown-item text-danger">Delete</a>
+                                <div class="col-auto">
+                                    <div class="dropdown">
+                                        <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a href="#" class="dropdown-item">Import</a>
+                                            <a href="#" class="dropdown-item">Export</a>
+                                            <a href="#" class="dropdown-item">Download</a>
+                                            <a href="#" class="dropdown-item text-danger">Delete</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -136,34 +138,30 @@
                         <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                             <div class="divide-y">
                                 <div>
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <span class="w-1 pe-0">
-                                                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked >
-                                            </span>
-                                            <span class="avatar">1</span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="text-truncate">
-                                                Create you first <strong>product</strong>.
+                                    @foreach ($checklists as $checklistK => $checklistV)
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <span class="w-1 pe-0">
+                                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked >
+                                                </span>
                                             </div>
-                                            <div class="text-muted">so your customers have something to buy :-)</div>
-                                        </div>
-                                        <div class="col-auto align-self-center">
-                                            <div class="badge bg-success"></div>
-                                            <span class="dropdown">
-                                                <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">
-                                                        Action
-                                                    </a>
-                                                    <a class="dropdown-item" href="#">
-                                                        Another action
-                                                    </a>
+                                            <div class="col-auto">
+                                                <span class="avatar">{{ $checklistK + 1 }}</span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    {{ $checklistV['title'] }}
                                                 </div>
-                                            </span>
+                                                <div class="text-muted">{!! $checklistV['description'] !!}</div>
+                                            </div>
+                                            <div class="col-auto align-self-center">
+                                                <div class="badge bg-success"></div>
+                                                <a href="{{ $checklistV['button_path'] }}" class="btn btn-light btn-square w-100">
+                                                    {{ $checklistV['button_title'] }}
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -489,6 +487,8 @@
                     	colors: {!! json_encode($salesGraph["colors"]) !!},
                     	names: {!! json_encode($salesGraph["names"]) !!},
                     	axes: {!! json_encode($salesGraph["axes"]) !!},
+                    	userDashboardStatus: {!! json_encode($salesGraph["user_dashboard_status"]) !!},
+                        
                     },
                     axis: {
                         x: {

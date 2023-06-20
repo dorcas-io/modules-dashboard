@@ -50,6 +50,27 @@ class ModulesDashboardController extends Controller {
         ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
     ];
 
+    const GETTING_STARTED_CHECKLISTS = [
+        "create_product" => [
+            "title" => "Create your first <strong>product</strong>",
+            "description" => "so your customers have something to buy :-)",
+            "button_title" => "Create Product",
+            "button_path" => "/",
+        ],
+        "setup_bank_account" => [
+            "title" => "Setup your <strong>bank account</strong>",
+            "description" => "so you can be paid for orders :-)",
+            "button_title" => "Provide Bank Account",
+            "button_path" => "/",
+        ],
+        "setup_shipping_pickup" => [
+            "title" => "Setup your <strong>pickup address</strong>",
+            "description" => "so delivery driver can get to you when items are ordered :-)",
+            "button_title" => "Setup Shipping Address",
+            "button_path" => "/",
+        ],
+    ];
+
     public function __construct()
     {
         $this->middleware( 'auth');
@@ -275,9 +296,13 @@ class ModulesDashboardController extends Controller {
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
             # get the company status
+
+            //$summary_aspects = ['employees', 'customers', 'orders'];
+            $summary_aspects = ['customers', 'orders'];
+
             $this->data['summary'] = self::prepareSummary(
                 $response->getData()['counts'] ?? [],
-                ['employees', 'customers', 'orders']
+                $summary_aspects
             ); //, 'cash'
             $template = 'modules-dashboard::business';
             $this->data['page']['title'] = 'Business Dashboard';
@@ -304,11 +329,21 @@ class ModulesDashboardController extends Controller {
         $user_dashboard_status = Cache::get($userDashboardStatusKey, [
             'preferences' => [
                 'guide_needed' => true,
-            ]
+            ],
+            'checklists' => [],
+
         ]);
-        
 
         $this->data['user_dashboard_status'] = $user_dashboard_status;
+
+
+        // PROCESS CHECKLISTS
+        $checklists = [];
+
+        $checklists = processChecklists($user_dashboard_status);
+
+        $this->data['checklists'] = $checklists;
+        
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
         $this->data['bank_accounts'] = $company->bank_accounts;
@@ -640,18 +675,32 @@ class ModulesDashboardController extends Controller {
      *
      * @return array
      */
-    protected function processNewUserPanel(array $userDashboardStatus): array
+    protected function processChecklists(array $userDashboardStatus): array
     {
-        $graph = [];
-        foreach ($metrics as $dateKey => $value) {
-            $date = Carbon::parse($dateKey);
-            $graph[] = [
-                'date' => $date->format('d M'),
-                'count' => $value['NGN']['count'] ?? 0,
-                'total' => $value['NGN']['total'] ?? 0
-            ];
+        $checklists = self::GETTING_STARTED_CHECKLISTS;
+
+        // process the checklists
+        foreach ($checklists as $cKey => $cValue) {
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
         }
-        return $graph;
+        return $checklists;
+    }
+
+    /**
+     * @param string $checkListKey
+     * @param array $payload
+     *
+     * @return array
+     */
+    protected function processChecklistsXhr(string $checkListKey, array $payload): array
+    {
+        $checklists = self::GETTING_STARTED_CHECKLISTS;
+
+        // process the checklists
+        foreach ($checklists as $cKey => $cValue) {
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+        }
+        return $checklists;
     }
 
 
