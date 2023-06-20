@@ -340,7 +340,7 @@ class ModulesDashboardController extends Controller {
         // PROCESS CHECKLISTS
         $checklists = [];
 
-        $checklists = processChecklists($user_dashboard_status);
+        $checklists = $this->processChecklists($user_dashboard_status);
 
         $this->data['checklists'] = $checklists;
         
