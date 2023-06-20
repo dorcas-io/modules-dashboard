@@ -156,6 +156,8 @@
                                             </div>
                                             <div class="col-auto align-self-center">
                                                 <div class="badge bg-success"></div>
+                                            </div>
+                                            <div class="col-auto align-self-center">
                                                 <a href="{{ $checklistV['button_path'] }}" class="btn btn-light btn-square w-100">
                                                     {{ $checklistV['button_title'] }}
                                                 </a>
