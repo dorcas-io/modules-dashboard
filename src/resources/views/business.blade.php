@@ -191,7 +191,7 @@
                                 @foreach ($checklists as $checklist)
                                     <div>
                                         <div class="row">
-                                            <div class="col-auto">
+                                            <div class="col-auto" style="vertical-align: middle;">
                                                 <span class="w-1 pe-0" style="vertical-align: middle;">
                                                     <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
                                                 </span>
@@ -205,10 +205,10 @@
                                                 </div>
                                                 <div class="text-muted">{!! html_entity_decode($checklist['description']) !!}</div>
                                             </div>
-                                            <div class="col-auto align-self-center">
+                                            <div class="col align-self-center">
                                                 <div class="badge bg-success"></div>
                                             </div>
-                                            <div class="col-auto align-self-center">
+                                            <div class="col align-self-center">
                                                 <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
                                                     {{ $checklist['button_title'] }}
                                                 </a>
