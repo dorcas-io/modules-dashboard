@@ -680,7 +680,7 @@ class ModulesDashboardController extends Controller {
         $checklists = self::GETTING_STARTED_CHECKLISTS;
 
         // process the checklists
-        $checklistsKeys = $rray_keys($checklists);
+        $checklistsKeys = array_keys($checklists);
         foreach ($checklists as $cKey => $cValue) {
             $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
             $checklists[$cKey]["index"] = array_search($cKey, $checklistsKeys) + 1;
