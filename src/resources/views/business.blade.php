@@ -142,7 +142,7 @@
                                         <div class="row">
                                             <div class="col-auto">
                                                 <span class="w-1 pe-0" style="vertical-align: middle;">
-                                                    <input readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
+                                                    <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
                                                 </span>
                                             </div>
                                             <div class="col-auto">
@@ -150,7 +150,7 @@
                                             </div>
                                             <div class="col">
                                                 <div class="text-truncate">
-                                                    {{ $checklist['title'] }}
+                                                    {! !$checklist['title'] !!}
                                                 </div>
                                                 <div class="text-muted">{!! html_entity_decode($checklist['description']) !!}</div>
                                             </div>
