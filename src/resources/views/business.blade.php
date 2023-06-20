@@ -1,4 +1,55 @@
 @extends('layouts.tabler')
+
+@section('head_css')
+<style type="text/css">
+    .divide-y>:not(template):not(:last-child) {
+        padding-bottom: 1rem!important;
+    }
+    .divide-y>:not(template):not(:first-child) {
+        padding-top: 1rem!important;
+    }
+    .divide-y>:not(template)~:not(template) {
+        border-top: 1px solid rgba(98,105,118,.16)!important;
+    }
+
+    .badge:empty {
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.5rem;
+        min-width: 0;
+        min-height: auto;
+        padding: 0;
+        border-radius: 100rem;
+        vertical-align: baseline;
+    }
+
+    .bg-primary {
+        color: #fff!important;
+        background: #206bc4!important;
+        --tblr-bg-opacity: 1;
+        background-color: rgba(var(--tblr-primary-rgb),var(--tblr-bg-opacity))!important;
+    }
+
+    .badge {
+        justify-content: center;
+        align-items: center;
+        background: #64748b;
+        overflow: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        min-width: 1.3571428571em;
+        font-weight: 600;
+        letter-spacing: .04em;
+        vertical-align: bottom;
+    }
+
+</style>
+@endsection
+
+
 @section('body_content_main')
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
