@@ -146,7 +146,7 @@
                                                 </span>
                                             </div>
                                             <div class="col-auto">
-                                                <span class="avatar">{{ $checklistK + 1 }}</span>
+                                                <span class="avatar">{{ $checklistK }}</span>
                                             </div>
                                             <div class="col">
                                                 <div class="text-truncate">
