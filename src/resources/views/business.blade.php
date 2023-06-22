@@ -363,7 +363,7 @@
                     this.userDashboardStatus.preferences.guide_needed = false;
                 },
                 processDashboard: function(processType, processPayload) {
-                    axios.post("/dashboard/process-dashboard"{
+                    axios.post("/dashboard/process-dashboard", {
                         type: processType,
                         payload: processPayload
                     })
