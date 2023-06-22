@@ -389,6 +389,8 @@ class ModulesDashboardController extends Controller {
         $this->data['checklists'] = [
             'checklists' => $checklists,
             "meta" => [
+                "done" => collect($checklists)->where('verification', true)->count(),
+                "count" => count($checklists),
                 "score" => floor( ($completion / count($checklists)) * 100 )
             ]
         ];

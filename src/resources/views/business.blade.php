@@ -156,7 +156,7 @@
                                         <a href="#" class="text-reset">Getting Started Checklist</a>
                                     </h3>
                                     <div class="text-muted">
-                                        Updated 2 hours ago
+                                        {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks completed!
                                     </div>
                                     <div class="mt-3">
                                         <div class="row g-2 align-items-center">
@@ -180,10 +180,8 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="#" class="dropdown-item">Import</a>
-                                            <a href="#" class="dropdown-item">Export</a>
-                                            <a href="#" class="dropdown-item">Download</a>
-                                            <a href="#" class="dropdown-item text-danger">Delete</a>
+                                            <!-- <a href="#" class="dropdown-item">Import</a> -->
+                                            <a href="#" class="dropdown-item text-danger">Remove</a>
                                         </div>
                                     </div>
                                 </div>

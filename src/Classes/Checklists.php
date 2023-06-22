@@ -17,6 +17,8 @@ class Checklists {
     private $request;
 
     private $sdk;
+
+    private $controller;
     
     const GETTING_STARTED_CHECKLISTS = [];
 
@@ -24,13 +26,14 @@ class Checklists {
     {
         $this->request = $request;
         $this->sdk = $sdk;
+        $this->controller = new Controller();
     }
 
     public function checkPickupAddress() : bool
     {
         $company = $this->request->user()->company(true, true);
 
-        $locations = Controller::getLocations($this->sdk);
+        $locations = $this->controller->getLocations($this->sdk);
 
         $company_data = (array) $company->extra_data;
 
@@ -39,19 +42,19 @@ class Checklists {
 
     public function checkOnlinePayment() : array
     {
-        $bank_accounts = Controller::getBankAccounts($this->sdk);
+        $bank_accounts = $this->controller->getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
     }
 
     public function checkBankAccounts() : array
     {
-        $bank_accounts = Controller::getBankAccounts($this->sdk);
+        $bank_accounts = $this->controller->getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
     }
 
     public function checkProducts() : bool
     {
-        $products = Controller::getProducts($this->sdk);
+        $products = $this->controller->getProducts($this->sdk);
         return count($products) > 0;
     }
 
