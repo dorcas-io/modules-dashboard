@@ -142,7 +142,7 @@
         </div>
         <div class="col-sm-12 col-md-6 col-lg-8" id="new-user-checklist">
             
-            <div class="row ">
+            <div class="row">
                 <!-- Check List Header Starts -->
                 <div class="col-12">
                     <div class="card ">
@@ -181,7 +181,7 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <!-- <a href="#" class="dropdown-item">Import</a> -->
-                                            <a href="#" class="dropdown-item text-danger">Remove</a>
+                                            <a href="#" class="dropdown-item text-danger" v-on:click="dashboardPanelRemove">Remove</a>
                                         </div>
                                     </div>
                                 </div>
@@ -233,7 +233,6 @@
             </div>
 
         </div>
-        @include('modules-dashboard::modals.message')
     </div>
 
     <div class="row row-cards row-deck" id="dashboard-data">
@@ -355,6 +354,9 @@
 
             },
             methods: {
+                dashboardPanelRemove: function() {
+                    this.userDashboardStatus.preferences.guide_needed = false;
+                },
                 account_expired: function() {
                     var expireString = 'account subscription expired'
                     var url = document.location.toString();

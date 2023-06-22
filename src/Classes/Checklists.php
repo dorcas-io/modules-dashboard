@@ -48,13 +48,15 @@ class Checklists {
 
     public function checkBankAccounts() : array
     {
-        $bank_accounts = $this->controller->getBankAccounts($this->sdk);
+        $check = $this->controller->getBankAccounts($this->sdk);
+        $bank_accounts = !empty($check) ? $check : [];
         return $bank_accounts->count() > 0;
     }
 
     public function checkProducts() : bool
     {
-        $products = $this->controller->getProducts($this->sdk);
+        $check = $this->controller->getProducts($this->sdk);
+        $products = !empty($check) ? $check : [];
         return count($products) > 0;
     }
 
