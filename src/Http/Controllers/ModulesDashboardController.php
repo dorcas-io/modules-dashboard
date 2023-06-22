@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
 use Dorcas\ModulesAssistant\Http\Controllers\ModulesAssistantController as Assistant;
 use App\Http\Controllers\HubController as HubControl;
+use Dorcas\ModulesDashboard\Classes\Checklists;
 
 class ModulesDashboardController extends Controller {
 
@@ -51,24 +52,61 @@ class ModulesDashboardController extends Controller {
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
+        "setup_store_url" => [
+            "module" => "ecommerce",
+            "title" => "Setup your <strong>online store address</strong>",
+            "description" => "a web address to reach your store directly",
+            "button_title" => "Setup Store Address",
+            "button_path" => "/",
+            "verification" => false,
+            "verification_method" => ""
+        ],
         "create_product" => [
+            "module" => "sales",
             "title" => "Create your first <strong>product</strong>",
-            "description" => "so your customers have something to buy :-)",
+            "description" => "so your customers have something to buy",
             "button_title" => "Create Product",
-            "button_path" => "/",
-            "status" => true
+            "button_path" => "/msl/products?getting_started=create_product",
+            "status" => true,
+            "verification" => false,
+            "verification_method" => "checkProducts"
         ],
-        "setup_bank_account" => [
-            "title" => "Setup your <strong>bank account</strong>",
-            "description" => "so you can be paid for orders :-)",
-            "button_title" => "Provide Bank Account",
-            "button_path" => "/",
-        ],
-        "setup_shipping_pickup" => [
+        // "create_customer" => [
+        //    "module" => "customers",
+        //     "title" => "Add your first <strong>customer</strong>",
+        //     "description" => "someone that has bought something from you before",
+        //     "button_title" => "Create Product",
+        //     "button_path" => "/msl/products?getting_started=create_product",
+        //     "status" => true,
+        //     "verification" => false,
+        //     "verification_method" => "checkProducts"
+        // ],
+        "setup_pickup_address" => [
+            "module" => "ecommerce",
             "title" => "Setup your <strong>pickup address</strong>",
             "description" => "so delivery driver can get to you when items are ordered :-)",
             "button_title" => "Setup Shipping Address",
             "button_path" => "/",
+            "verification" => false,
+            "verification_method" => "checkPickupAddress"
+        ],
+        // "setup_online_payment" => [
+        //     "module" => "ecommerce",
+        //     "title" => "Setup your <strong>online payment</strong>",
+        //     "description" => "so customers can pay you by card",
+        //     "button_title" => "Setup Online Payment",
+        //     "button_path" => "/",
+        //     "verification" => false,
+        //     "verification_method" => "checkOnlinePayment"
+        // ],
+        "setup_bank_account" => [
+            "module" => "settings",
+            "title" => "Setup your <strong>bank account</strong>",
+            "description" => "so order payments can be sent to your bank account",
+            "button_title" => "Provide Bank Account",
+            "button_path" => "/",
+            "verification" => false,
+            "verification_method" => "checkBankAccounts"
         ],
     ];
 
@@ -341,7 +379,7 @@ class ModulesDashboardController extends Controller {
         // PROCESS CHECKLISTS
         $checklists = [];
 
-        $checklists = $this->processChecklists($user_dashboard_status);
+        $checklists = $this->processChecklists($request, $sdk, $user_dashboard_status);
 
         $completion = 0;
         foreach ($checklists as $cKey => $cValue) {
@@ -683,18 +721,27 @@ class ModulesDashboardController extends Controller {
 
     /**
      * @param array $userStatus
+     * @param Request $request
+     * @param Sdk $sdk
      *
      * @return array
      */
-    protected function processChecklists(array $userDashboardStatus): array
+    protected function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus): array
     {
         $checklists = self::GETTING_STARTED_CHECKLISTS;
 
         // process the checklists
         $checklistsKeys = array_keys($checklists);
         foreach ($checklists as $cKey => $cValue) {
-            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
             $checklists[$cKey]["index"] = array_search($cKey, $checklistsKeys) + 1;
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+
+            if (isset($checklists[$cKey]["verification_method"]) && !empty($checklists[$cKey]["verification_method"])) {
+                $method = $checklists[$cKey]["verification_method"];
+                $c = new Checklists($request, $sdk);
+                $verify = $c->$method();
+                $checklists[$cKey]["verification"] = $verify;
+            }
         }
         return $checklists;
     }
