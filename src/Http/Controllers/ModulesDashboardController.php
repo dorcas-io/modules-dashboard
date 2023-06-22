@@ -36,18 +36,40 @@ class ModulesDashboardController extends Controller {
 
     const SETUP_UI_COMPONENTS = [
         ['name' => 'Dashboard', 'base' => true, 'id' => 'dashboard', 'enabled' => true, 'is_readonly' => true, 'path' => 'dashboard', 'children' => []],
-        ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => false, 'path' => 'mcu', 'children' => []],
-        ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => false, 'path' => 'mec', 'children' => []],
-        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => true, 'is_readonly' => false, 'path' => 'mpe', 'children' => []],
-        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => true, 'is_readonly' => false, 'path' => 'mfn', 'children' => []],
-        ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => false, 'path' => 'msl', 'children' => []],
-        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => true, 'is_readonly' => false, 'path' => 'mop', 'children' => []],
-        //['name' => 'Addons', 'id' => 'addons', 'enabled' => true, 'is_readonly' => false, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
-        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
+        ['name' => 'Customers', 'base' => true, 'id' => 'customers', 'enabled' => true, 'is_readonly' => true, 'path' => 'mcu', 'children' => []],
+        ['name' => 'eCommerce', 'base' => false, 'id' => 'ecommerce', 'enabled' => true, 'is_readonly' => true, 'path' => 'mec', 'children' => []],
+        ['name' => 'People', 'base' => false, 'id' => 'people', 'enabled' => false, 'is_readonly' => true, 'path' => 'mpe', 'children' => []],
+        ['name' => 'Finance', 'base' => false, 'id' => 'finance', 'enabled' => false, 'is_readonly' => true, 'path' => 'mfn', 'children' => []],
+        ['name' => 'Sales', 'base' => false, 'id' => 'sales', 'enabled' => true, 'is_readonly' => true, 'path' => 'msl', 'children' => []],
+        ['name' => 'Operations', 'base' => true, 'id' => 'operations', 'enabled' => false, 'is_readonly' => true, 'path' => 'mop', 'children' => []],
+        ['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => false, 'is_readonly' => true, 'path' => ['mda', 'mmp', 'map', 'mit'], 'children' => []],
+        //['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
         ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => true, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
         ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
+    ];
+
+    const GETTING_STARTED_CHECKLISTS = [
+        "create_product" => [
+            "title" => "Create your first <strong>product</strong>",
+            "description" => "so your customers have something to buy :-)",
+            "button_title" => "Create Product",
+            "button_path" => "/",
+            "status" => true
+        ],
+        "setup_bank_account" => [
+            "title" => "Setup your <strong>bank account</strong>",
+            "description" => "so you can be paid for orders :-)",
+            "button_title" => "Provide Bank Account",
+            "button_path" => "/",
+        ],
+        "setup_shipping_pickup" => [
+            "title" => "Setup your <strong>pickup address</strong>",
+            "description" => "so delivery driver can get to you when items are ordered :-)",
+            "button_title" => "Setup Shipping Address",
+            "button_path" => "/",
+        ],
     ];
 
     public function __construct()
@@ -82,19 +104,12 @@ class ModulesDashboardController extends Controller {
         $companySetup = $configurations['first_time'] ?? 0;
 
         $this->data['isConfigured'] = true;
-        if (empty($companySetup)) { //&& empty($userUiSetup) - we use elsewhere
+        if (empty($companySetup)) {
             # user's UI is not configured
 
-            //$this->data['isFirstConfiguration'] = empty($configurations['ui_setup']);
             $this->data['isFirstConfiguration'] = empty($ScompanySetup);
             # use missing first_time value as check
 
-            // if ($request->has('show_ui_wizard')) {
-            //     $this->data['isConfigured'] = false;
-            // } else {
-            //     $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
-            // }
-            # check if the UI has been configured
             $this->data['isConfigured'] = !$this->data['isFirstConfiguration'];
 
             $currentUiSetup = $configurations['ui_setup'] ?? [];
@@ -112,15 +127,6 @@ class ModulesDashboardController extends Controller {
             });
             # add the UI components from company settings
         }
-        // $this->data['countries'] = $countries = $this->getCountries($sdk);
-        
-        // # get the countries listing
-        // $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
-        // # get the nigeria country model
-        // if (!empty($nigeria)) {
-        //     $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
-        //     # get the states
-        // }
 
 
         $dorcasUser = $request->user();
@@ -135,7 +141,12 @@ class ModulesDashboardController extends Controller {
         }
 
         if (!$this->data['isConfigured']) {
-            return redirect(route('welcome-setup'));
+            $autosetup = env('SETTINGS_DASHBOARD_AUTOSETUP', 'no');
+            if ( $autosetup  == 'yes' ) {
+                $this->auto_setup($request, $sdk);
+            } else {
+                return redirect(route('welcome-setup'));
+            }
         }
         # first time users
 
@@ -286,9 +297,13 @@ class ModulesDashboardController extends Controller {
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
             # get the company status
+
+            //$summary_aspects = ['employees', 'customers', 'orders'];
+            $summary_aspects = ['customers', 'orders'];
+
             $this->data['summary'] = self::prepareSummary(
                 $response->getData()['counts'] ?? [],
-                ['employees', 'customers', 'orders']
+                $summary_aspects
             ); //, 'cash'
             $template = 'modules-dashboard::business';
             $this->data['page']['title'] = 'Business Dashboard';
@@ -306,9 +321,48 @@ class ModulesDashboardController extends Controller {
             }
             $this->data['plan']['price'] = $plan['price_' . $company->plan_type]['raw'];
         }
+
+        // PROCESS USER DASHBOARD STATUS
+        $userDashboardStatus = [];
+
+        $userDashboardStatusKey = 'userDashboardStatus.' . $dorcasUser->id;
+
+        $user_dashboard_status = Cache::get($userDashboardStatusKey, [
+            'preferences' => [
+                'guide_needed' => true,
+            ],
+            'checklists' => [],
+
+        ]);
+
+        $this->data['user_dashboard_status'] = $user_dashboard_status;
+
+
+        // PROCESS CHECKLISTS
+        $checklists = [];
+
+        $checklists = $this->processChecklists($user_dashboard_status);
+
+        $completion = 0;
+        foreach ($checklists as $cKey => $cValue) {
+            $completion += !empty($cValue['status']) ? 1 : 0;
+        }
+
+        $this->data['checklists'] = [
+            'checklists' => $checklists,
+            "meta" => [
+                "score" => floor( ($completion / count($checklists)) * 100 )
+            ]
+        ];
+        
         
         $this->data['authToken'] = $sdk->getAuthorizationToken();
         $this->data['bank_accounts'] = $company->bank_accounts;
+
+        $this->data['dashboard_links'] = [
+            'documentation' => env('SETTINGS_DASHBOARD_DOCUMENTATION', 'https://docs.dorcas.io'),
+            'videos' => env('SETTINGS_DASHBOARD_VIDEOS', 'https://youtube.com'),
+        ];
 
         return view($template, $this->data);
     }
@@ -394,6 +448,106 @@ class ModulesDashboardController extends Controller {
         //return response()->json($query->getData());
 
     }
+
+    
+
+    private function auto_setup(Request $request, Sdk $sdk)
+    {
+        $company = $this->getCompany();
+        # get the company
+        
+        // Determine Default Values
+        $business_name = $company->name;
+        $business_type = "";
+        $business_size = "";
+        $business_sector = "";
+        
+        $countries = $this->getCountries($sdk);
+        $countryCode = env('SETTINGS_COUNTRY', 'NG') == 2 ? env('SETTINGS_COUNTRY', 'NG') : 'NG';
+        $country = $countries->where('iso_code', $countryCode)->first();
+        $defaultCountry = $countries->where('iso_code', 'NG')->first();
+        $countryId = !empty($countryId) ? $country->id : $defaultCountry->id;
+
+        $business_country = $countryId;
+        $business_state = "";
+        $currency = env('SETTINGS_CURRENCY', 'NGN');
+
+        $selected_apps = [
+            "customers",
+            "ecommerce",
+            "sales"
+        ];
+
+        /**
+        * a lot can be controlled at self::SETUP_UI_COMPONENTS
+        * readoly means uneditable in UI
+        * enbled means not showig
+        */
+
+        $selected_apps = ["customers", "ecommerce", "sales"];
+        # choose which modules to activate
+
+
+        $configurations = (array) $company->extra_data;
+        $this->data['isConfigured'] = !empty($configurations['ui_setup']);
+        
+        
+        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && !empty($field['enabled']);
+        })->pluck('id');
+        # get the enabled-readonly values
+        
+        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+            return !empty($field['is_readonly']) && empty($field['enabled']);
+        })->pluck('id');
+        # get the disabled-readonly values
+        
+        $selectedApps = collect($selected_apps)->merge($readonlyExtend);
+        # set the selected apps
+        
+        $selectedApps = $selectedApps->filter(function ($id) use ($readonlyRemovals) {
+            return !$readonlyRemovals->contains($id);
+        });
+        # remove them
+
+       $autoInstalledApps =  $selectedApps->unique()->values()->all();
+        
+        try {
+            $configurations['business_type'] = $business_type;
+            $configurations['business_size'] = $business_size;
+            $configurations['business_sector'] = $business_sector;
+            
+            $configurations['country_id'] = $business_country;
+            $configurations['state_id'] = $business_state;
+            $configurations['currency'] = strtoupper($currency);
+            $configurations['ui_setup'] = $autoInstalledApps;
+            $configurations['first_time'] = 1;
+            
+            $query = $sdk->createCompanyService()->addBodyParam('name', $business_name, true)
+                                                ->addBodyParam('extra_data', $configurations)
+                                                ->send('PUT');                                  
+
+            # send the request
+            if (!$query->isSuccessful()) {
+                throw new \RuntimeException('Failed while updating your business information. Please try again.');
+            }
+            $message = 'Successfully setup business information for ' . $business_name;
+            $response = (tabler_ui_html_response([$message]))->setType(UiResponse::TYPE_SUCCESS);
+        } catch (ServerException $e) {
+            $message = json_decode((string) $e->getResponse()->getBody(), true);
+            $response = (tabler_ui_html_response([$message['message']]))->setType(UiResponse::TYPE_ERROR);
+            //throw new \RuntimeException($message['message']);
+        } catch (\Exception $e) {
+            $response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            return redirect(url()->current())->with('UiResponse', $response);
+            //throw new \RuntimeException($e->getMessage());
+        }
+
+        return redirect(url()->current())->with('UiResponse', $response);
+        //return redirect(route('dashboard'));
+
+    }
+
 
 
     /**
@@ -522,6 +676,44 @@ class ModulesDashboardController extends Controller {
         return response()->json($query->getData());
 
     }
+
+
+
+    /**
+     * @param array $userStatus
+     *
+     * @return array
+     */
+    protected function processChecklists(array $userDashboardStatus): array
+    {
+        $checklists = self::GETTING_STARTED_CHECKLISTS;
+
+        // process the checklists
+        $checklistsKeys = array_keys($checklists);
+        foreach ($checklists as $cKey => $cValue) {
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+            $checklists[$cKey]["index"] = array_search($cKey, $checklistsKeys) + 1;
+        }
+        return $checklists;
+    }
+
+    /**
+     * @param string $checkListKey
+     * @param array $payload
+     *
+     * @return array
+     */
+    protected function processChecklistsXhr(string $checkListKey, array $payload): array
+    {
+        $checklists = self::GETTING_STARTED_CHECKLISTS;
+
+        // process the checklists
+        foreach ($checklists as $cKey => $cValue) {
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+        }
+        return $checklists;
+    }
+
 
 
     /**
@@ -753,7 +945,7 @@ class ModulesDashboardController extends Controller {
         return response()->json($query->getData());
     }
 
-    public function faqs(){
+    public function faqs() {
         $this->data = [
             'page' => ['title' => 'Frequently Asked Quenstions ?'],
             'header' => ['title' => 'Frequently Asked Quenstions ?'],

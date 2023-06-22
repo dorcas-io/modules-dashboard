@@ -21,8 +21,10 @@
 					  <span class="avatar" style="background-image: url({{ cdn('images/avatar/avatar-9.png') }})"></span>
 					  The Hub is an all-in-one productivity software platform that helps you run your entire business better.
 					  <br/><br/>
-					  It is basically a collection of tools that you can use to digitally manage e-commerce, sales, people, accounting and so much more!
+					  <!--
+                      It is basically a collection of tools that you can use to digitally manage e-commerce, sales, people, accounting and so much more!
 					  <br/><br/>
+-->
 					  <div class="btn-list">
 					    <button class="btn btn-success" type="button" v-on:click.prevent="watchVideo"><i class="fe fe-play mr-2"></i> Watch A Video</button>
                         @if ($isConfigured)
@@ -95,7 +97,7 @@
 
                         <div class="form-group col-sm-12 col-md-6">
                             <select class="form-control" name="business_size" id="business_size" v-model="businessConfiguration.business_size" required>
-                                <option value="">Choose your Business Type</option>
+                                <option value="">Choose your Business Size</option>
                                 <option value="1">1 Person (Just You)</option>
                                 <option value="2 - 9">2 - 9 People</option>
                                 <option value="10 - 49">10 - 49 People</option>
