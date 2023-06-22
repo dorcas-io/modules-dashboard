@@ -292,6 +292,7 @@
         </div>
         @include('modules-dashboard::modals.message')
     </div>
+</div>
 
 @endsection
 @section('body_js')
