@@ -374,8 +374,6 @@ class ModulesDashboardController extends Controller {
                                                 ->send('PUT');
 
 
-            //Cache::forget('business.employees.'.$company->id);                                     
-
             # send the request
             if (!$query->isSuccessful()) {
                 throw new \RuntimeException('Failed while updating your business information. Please try again.');
