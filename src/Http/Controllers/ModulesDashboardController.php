@@ -381,17 +381,14 @@ class ModulesDashboardController extends Controller {
 
         $checklists = $this->processChecklists($request, $sdk, $user_dashboard_status);
 
-        $completion = 0;
-        foreach ($checklists as $cKey => $cValue) {
-            $completion += !empty($cValue['status']) ? 1 : 0;
-        }
+        $done = collect($checklists)->where('verification', true)->count();
 
         $this->data['checklists'] = [
             'checklists' => $checklists,
             "meta" => [
-                "done" => collect($checklists)->where('verification', true)->count(),
+                "done" => $done,
                 "count" => count($checklists),
-                "score" => floor( ($completion / count($checklists)) * 100 )
+                "score" => floor( ($done / count($checklists)) * 100 )
             ]
         ];
         
