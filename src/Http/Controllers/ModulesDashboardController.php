@@ -754,15 +754,44 @@ class ModulesDashboardController extends Controller {
      *
      * @return array
      */
-    protected function processChecklistsXhr(string $checkListKey, array $payload): array
+    protected function processDashboard(Request $request): array
     {
-        $checklists = self::GETTING_STARTED_CHECKLISTS;
+        $type = $request->type;
+        $payload = $request->payload;
 
-        // process the checklists
-        foreach ($checklists as $cKey => $cValue) {
-            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+        $response = [
+            "status" => false,
+            "message" => ""
+        ];
+
+        switch($type) {
+
+            case "update-preferences":
+
+                $preference = $payload["preference"] ?? '';
+                $value = $payload["value"] ?? '';
+
+                if ( !empty($preference) && !empty($value) ) {
+
+                    $dorcasUser = $request->user();
+                    //$company = $dorcasUser->company(true, true);
+
+                    $cacheKey = 'userDashboardStatus.' . $dorcasUser->id;
+            
+                    $user_dashboard_status = Cache::get($cacheKey);
+
+                    $user_dashboard_status["preferences"]["guide_needed"] = $value;
+
+                    Cache::forever($cacheKey, $user_dashboard_status);
+
+                } else {
+
+                    $response["message"] = "Invalid Preference";
+                    
+                }
+
+                break;
         }
-        return $checklists;
     }
 
 

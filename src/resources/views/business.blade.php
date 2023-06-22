@@ -357,6 +357,29 @@
                 dashboardPanelRemove: function() {
                     this.userDashboardStatus.preferences.guide_needed = false;
                 },
+                processDashboard: function(processType, processPayload) {
+                    var context = this;
+                    this.verifying = true;
+                    axios.post("/dashboard/process-dashboard"{
+                        type: processType,
+                        payload: processPayload
+                    })
+                        .then(function (response) {
+                            //swal('Title', 'Description', 'success');
+                        }).catch(function (error) {
+                            var message = '';
+                            if (error.response) {
+                                var e = error.response;
+                                message = e.data.message;
+                            } else if (error.request) {
+                                message = 'The request was made but no response was received';
+                            } else {
+                                message = error.message;
+                            }
+                            context.verifying = false;
+                            swal("Oops!", message, "warning");
+                        });
+                },
                 account_expired: function() {
                     var expireString = 'account subscription expired'
                     var url = document.location.toString();

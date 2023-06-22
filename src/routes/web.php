@@ -8,6 +8,8 @@ Route::group(['namespace' => 'Dorcas\ModulesDashboard\Http\Controllers', 'prefix
 	Route::get('/overview', 'ModulesDashboardController@welcome_overview')->name('welcome-overview');
 	Route::post('/resend-verification', 'ModulesDashboardController@resendVerification');
 	Route::get('/faqs', 'ModulesDashboardController@faqs');
+
+	Route::post('/process-dashboard', 'ModulesDashboardController@processDashboard')->name('process-dashboard');
 });
 
 ?>

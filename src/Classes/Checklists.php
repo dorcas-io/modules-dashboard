@@ -40,13 +40,13 @@ class Checklists {
         return !empty($locations) && !empty($company_data['location']);
     }
 
-    public function checkOnlinePayment() : array
+    public function checkOnlinePayment() : bool
     {
         $bank_accounts = $this->controller->getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
     }
 
-    public function checkBankAccounts() : array
+    public function checkBankAccounts() : bool
     {
         $check = $this->controller->getBankAccounts($this->sdk);
         $bank_accounts = !empty($check) ? $check : [];
