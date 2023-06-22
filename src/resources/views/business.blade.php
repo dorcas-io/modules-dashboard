@@ -93,6 +93,7 @@
         <div class="row">
                 @include('layouts.blocks.tabler.alert')
         </div>
+    </div>
 
     <div class="row row-cards row-deck" id="dashboard-statistics">
     	@foreach ($summary as $figures)
@@ -292,7 +293,6 @@
         </div>
         @include('modules-dashboard::modals.message')
     </div>
-</div>
 
 @endsection
 @section('body_js')
