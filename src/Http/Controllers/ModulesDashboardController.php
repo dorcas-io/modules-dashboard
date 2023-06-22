@@ -296,7 +296,15 @@ class ModulesDashboardController extends Controller {
 
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
-            # get the company status
+
+
+           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
+
+
+           $this->data['partner_id'] = $response->getData();
+
+
+//            # get the company status
 
             //$summary_aspects = ['employees', 'customers', 'orders'];
             $summary_aspects = ['customers', 'orders'];

@@ -63,8 +63,8 @@
 @section('body_content_main')
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
-        <div class="row" v-if="!user.is_verified">
-            <div class="col-sm-12 col-md-6">
+        <div class="row">
+            <div class="col-sm-12 col-md-6"  v-if="!user.is_verified">
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -75,19 +75,31 @@
                     @endslot
                 @endcomponent
             </div>
+
             <div class="col-sm-12 col-md-6">
-                @if(count($bank_accounts) <  0)
-                    <div class="alert-danger alert mb-0">
-                        <div class="d-flex align-items-center alert-danger">
-                            <div class="flex-fill ms-3 text-truncate">
-                                <h4>Business Bank Details Yet To be Added</h4>
-                                <span class="small">The Business is yet to add Bank Details ,Payment can not be processed</span><br><br>
-                                <a href="{{url('mse/settings-banking')}}" class="btn btn-danger">Add Bank Details</a>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                @component('layouts.blocks.tabler.alert-with-buttons')
+                    @slot('title')
+                       Partner ID to gain access to the Mobile platform :
+                    @endslot
+                      Partner ID :   {{$partner_id}}
+                    @slot('buttons')
+                        <button v-on:click.prevent="resendVerification" class="btn btn-secondary" :class="{'btn-loading':verifying}" type="button">Send Verification Email</button>
+                    @endslot
+                @endcomponent
             </div>
+{{--            <div class="col-sm-12 col-md-6">--}}
+{{--                @if(count($bank_accounts) <  0)--}}
+{{--                    <div class="alert-danger alert mb-0">--}}
+{{--                        <div class="d-flex align-items-center alert-danger">--}}
+{{--                            <div class="flex-fill ms-3 text-truncate">--}}
+{{--                                <h4>Business Bank Details Yet To be Added</h4>--}}
+{{--                                <span class="small">The Business is yet to add Bank Details ,Payment can not be processed</span><br><br>--}}
+{{--                                <a href="{{url('mse/settings-banking')}}" class="btn btn-danger">Add Bank Details</a>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                @endif--}}
+{{--            </div>--}}
         </div>
         <br>
         <div class="row">
