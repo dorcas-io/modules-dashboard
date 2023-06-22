@@ -52,12 +52,12 @@ class ModulesDashboardController extends Controller {
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
-        "setup_store_url" => [
+        "setup_store" => [
             "module" => "ecommerce",
-            "title" => "Setup your <strong>online store address</strong>",
-            "description" => "a web address to reach your store directly",
+            "title" => "Setup your <strong>online store details</strong>",
+            "description" => "so customers can visit your store directly",
             "button_title" => "Setup Store Address",
-            "button_path" => "/",
+            "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
             "verification" => false,
             "verification_method" => ""
         ],
@@ -66,7 +66,7 @@ class ModulesDashboardController extends Controller {
             "title" => "Create your first <strong>product</strong>",
             "description" => "so your customers have something to buy",
             "button_title" => "Create Product",
-            "button_path" => "/msl/products?getting_started=create_product",
+            "button_path" => "/msl/sales-products?getting_started=create_product",
             "status" => true,
             "verification" => false,
             "verification_method" => "checkProducts"
@@ -86,7 +86,7 @@ class ModulesDashboardController extends Controller {
             "title" => "Setup your <strong>pickup address</strong>",
             "description" => "so delivery driver can get to you when items are ordered :-)",
             "button_title" => "Setup Shipping Address",
-            "button_path" => "/",
+            "button_path" => "/mse/settings-business?getting_started=setup_pickup_address",
             "verification" => false,
             "verification_method" => "checkPickupAddress"
         ],
@@ -104,7 +104,7 @@ class ModulesDashboardController extends Controller {
             "title" => "Setup your <strong>bank account</strong>",
             "description" => "so order payments can be sent to your bank account",
             "button_title" => "Provide Bank Account",
-            "button_path" => "/",
+            "button_path" => "/mse/settings-banking?getting_started=setup_bank_account",
             "verification" => false,
             "verification_method" => "checkBankAccounts"
         ],

@@ -156,7 +156,7 @@
                                         <a href="#" class="text-reset">Getting Started Checklist</a>
                                     </h3>
                                     <div class="text-muted">
-                                        {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks completed!
+                                        {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks completed.
                                     </div>
                                     <div class="mt-3">
                                         <div class="row g-2 align-items-center">
@@ -200,8 +200,8 @@
                                     <div>
                                         <div class="row">
                                             <div class="col-auto" style="vertical-align: middle;">
-                                                <span class="w-1 pe-0" style="vertical-align: middle;">
-                                                    <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
+                                                <span class="w-1" style="vertical-align: middle;">
+                                                    <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['verification'] ? 'checked' : '' }}>
                                                 </span>
                                             </div>
                                             <div class="col-auto">
@@ -219,7 +219,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-auto align-self-center">
-                                                <div class="badge bg-success"></div>
+                                                <div class="badge {{ $checklist['verification'] ? 'bg-success' : 'bg-danger' }}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -358,8 +358,6 @@
                     this.userDashboardStatus.preferences.guide_needed = false;
                 },
                 processDashboard: function(processType, processPayload) {
-                    var context = this;
-                    this.verifying = true;
                     axios.post("/dashboard/process-dashboard"{
                         type: processType,
                         payload: processPayload
