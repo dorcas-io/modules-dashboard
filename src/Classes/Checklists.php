@@ -39,19 +39,19 @@ class Checklists {
 
     public function checkOnlinePayment() : array
     {
-        $bank_accounts = Controller::getBankAccounts($sdk);
+        $bank_accounts = Controller::getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
     }
 
     public function checkBankAccounts() : array
     {
-        $bank_accounts = Controller::getBankAccounts($sdk);
+        $bank_accounts = Controller::getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
     }
 
-    public function checkProducts(Sdk $sdk) : bool
+    public function checkProducts() : bool
     {
-        $products = Controller::getProducts();
+        $products = Controller::getProducts($this->sdk);
         return count($products) > 0;
     }
 
