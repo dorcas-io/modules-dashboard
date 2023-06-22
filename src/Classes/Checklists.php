@@ -37,13 +37,13 @@ class Checklists {
         return !empty($locations) && !empty($company_data['location']);
     }
 
-    public function checkOnlinePayment(Sdk $sdk) : array
+    public function checkOnlinePayment() : array
     {
         $bank_accounts = Controller::getBankAccounts($sdk);
         return $bank_accounts->count() > 0;
     }
 
-    public function checkBankAccounts(Sdk $sdk) : array
+    public function checkBankAccounts() : array
     {
         $bank_accounts = Controller::getBankAccounts($sdk);
         return $bank_accounts->count() > 0;
@@ -51,7 +51,7 @@ class Checklists {
 
     public function checkProducts(Sdk $sdk) : bool
     {
-        $products = Controller::getProducts($sdk);
+        $products = Controller::getProducts();
         return count($products) > 0;
     }
 
