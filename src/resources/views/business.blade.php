@@ -220,7 +220,7 @@
                         <div class="card" style="height: 28rem">
                             <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                                 <div class="divide-y">
-                                    @foreach ($checklists['checklists'] as $checklist)
+                                    @foreach ($checklists['checklists'] as $checklistK => $checklist)
                                         <div>
                                             <div class="row">
                                                 <div class="col-auto" style="vertical-align: middle;">
@@ -235,7 +235,7 @@
                                                     <div class="text-truncate">
                                                         {!! $checklist['title'] !!}
                                                     </div>
-                                                    <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" on-click:prevent.click="showWhy('{{ $checklist['parent'] }}')">Why?</a></div>
+                                                    <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" on-click:prevent.click="showWhy('{{ $checklistK }}')">Why?</a></div>
                                                 </div>
                                                 <div class="col align-self-center">
                                                     <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">

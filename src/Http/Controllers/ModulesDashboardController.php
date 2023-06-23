@@ -745,7 +745,6 @@ class ModulesDashboardController extends Controller {
         // process the checklists
         $checklistsKeys = array_keys($checklists);
         foreach ($checklists as $cKey => $cValue) {
-            $checklists[$cKey]["parent"] = $cKey;
             $checklists[$cKey]["index"] = array_search($cKey, $checklistsKeys) + 1;
             $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
 
@@ -775,17 +774,21 @@ class ModulesDashboardController extends Controller {
 
         $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
 
+        $data = $response->getData();
 
-//        $this->data['partner_id'] = $response->getData();
+        if (!isset($data['errors'])) {
 
+            return [
+                'partnerID' =>  $data,
+                'data' => $data
+            ];
 
-        // you can connect to bridge and fetch live details and return
-
-        // ttemporary details
-        return [
-            'partnerID' => $response->getData() ?? "HUB",
-            'otherParam' => "gbas"
-        ];
+        } else {
+            return [
+                'partnerID' =>  "HUB",
+                'data' => $data
+            ];
+        }
         
     }
 
