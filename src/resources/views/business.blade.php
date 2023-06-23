@@ -101,8 +101,8 @@
                         <div class="d-flex align-items-center alert-info">
                             <div class="flex-fill ms-3 text-truncate">
                                 <h4>Manage Invoicing, Orders & Sales on the go!</h4>
-                                <span class="small">If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
-                                <br><br>
+                                <span>If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
+                                <br>
                                 <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
                         <div class="card" style="height: 28rem">
                             <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                                 <div class="divide-y">
-                                    @foreach ($checklists['checklists'] as $checklist)
+                                    @foreach ($checklists['checklists'] as $checklistK => checklist)
                                         <div>
                                             <div class="row">
                                                 <div class="col-auto" style="vertical-align: middle;">
@@ -235,7 +235,7 @@
                                                     <div class="text-truncate">
                                                         {!! $checklist['title'] !!}
                                                     </div>
-                                                    <div class="text-muted">{!! ($checklist['description']) !!}</div>
+                                                    <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" on-click:prevent.click="showWhy('{{ $checklistK }}')">Why?</a></div>
                                                 </div>
                                                 <div class="col align-self-center">
                                                     <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
@@ -337,6 +337,7 @@
                 apps_fetching: false,
                 dashboardLink: {!! json_encode($dashboard_links) !!},
                 userDashboardStatus: {!! json_encode($user_dashboard_status) !!},
+                checklists: {!! json_encode($checklists) !!},
             },
             computed: {
                 greeting: function () {
@@ -380,6 +381,19 @@
             methods: {
                 dashboardPanelRemove: function() {
                     this.userDashboardStatus.preferences.guide_needed = false;
+                },
+                showWhy: function(checklistIndex) {
+
+                    let currentChecklist = this.checklists.checklists.find( checklist, index => index==checklistIndex);
+
+                    //reset Message
+                    this.dashboard_message: { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' };
+
+                    this.dashboard_message.title = "Why " + currentChecklist.title
+                    this.dashboard_message.body = "<p>" + currentChecklist.why + "</p>"
+                    this.dashboard_message.action = currentChecklist.button_title
+                    this.dashboard_message.action_url = currentChecklist.button_path
+                    $('#dashboard-message-modal').modal('show'); 
                 },
                 processDashboard: function(processType, processPayload) {
                     axios.post("/dashboard/process-dashboard", {

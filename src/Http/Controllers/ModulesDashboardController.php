@@ -53,26 +53,27 @@ class ModulesDashboardController extends Controller {
 
     const GETTING_STARTED_CHECKLISTS = [
         "setup_store" => [
-            "module" => "ecommerce",
+            "module" => ["ecommerce"],
             "title" => "Setup your <strong>online store details</strong>",
-            "description" => "so customers can visit your store directly",
+            "description" => "Add important details for your customers",
+            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers",
             "button_title" => "Setup Store Address",
             "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
             "verification" => false,
             "verification_method" => ""
         ],
         "create_product" => [
-            "module" => "sales",
+            "module" => ["sales"],
             "title" => "Create your first <strong>product</strong>",
             "description" => "so your customers have something to buy",
+            "why" => "You need to have atleast 1 product on your store before launching it.<b/>You will add product name, selling price, quantity available and category. You can optionally add an image",
             "button_title" => "Create Product",
             "button_path" => "/msl/sales-products?getting_started=create_product",
-            "status" => true,
             "verification" => false,
             "verification_method" => "checkProducts"
         ],
         // "create_customer" => [
-        //    "module" => "customers",
+        //    "module" => ["customers"],
         //     "title" => "Add your first <strong>customer</strong>",
         //     "description" => "someone that has bought something from you before",
         //     "button_title" => "Create Product",
@@ -82,16 +83,17 @@ class ModulesDashboardController extends Controller {
         //     "verification_method" => "checkProducts"
         // ],
         "setup_pickup_address" => [
-            "module" => "ecommerce",
+            "module" => ["ecommerce"],
             "title" => "Setup your <strong>pickup address</strong>",
-            "description" => "so delivery driver can get to you when items are ordered :-)",
+            "description" => "so delivery driver can get to you when items are ordered",
+            "why" => "You need to add your address and Geo-Locate it on the map so that shipping pickups are accurate",
             "button_title" => "Setup Shipping Address",
             "button_path" => "/mse/settings-business?getting_started=setup_pickup_address",
             "verification" => false,
             "verification_method" => "checkPickupAddress"
         ],
         // "setup_online_payment" => [
-        //     "module" => "ecommerce",
+        //     "module" => ["ecommerce"],
         //     "title" => "Setup your <strong>online payment</strong>",
         //     "description" => "so customers can pay you by card",
         //     "button_title" => "Setup Online Payment",
@@ -100,9 +102,10 @@ class ModulesDashboardController extends Controller {
         //     "verification_method" => "checkOnlinePayment"
         // ],
         "setup_bank_account" => [
-            "module" => "settings",
+            "module" => ["settings"],
             "title" => "Setup your <strong>bank account</strong>",
             "description" => "so order payments can be sent to your bank account",
+            "why" => "We need your correct bank account details so that when you are paid, the funds can be transferred into your account",
             "button_title" => "Provide Bank Account",
             "button_path" => "/mse/settings-banking?getting_started=setup_bank_account",
             "verification" => false,
