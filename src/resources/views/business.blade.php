@@ -238,7 +238,7 @@
                                                     <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" on-click:prevent.click="showWhy('{{ $checklistK }}')">Why?</a></div>
                                                 </div>
                                                 <div class="col align-self-center">
-                                                    <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
+                                                    <a href="{{ $checklist['button_path'] }}" class="btn {{ $checklist['verification'] ? 'btn-light' : 'btn-primary' }} btn-pill w-100">
                                                         {{ $checklist['button_title'] }}
                                                     </a>
                                                 </div>
