@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
 use Dorcas\ModulesAssistant\Http\Controllers\ModulesAssistantController as Assistant;
 use App\Http\Controllers\HubController as HubControl;
+use Dorcas\ModulesDashboard\Classes\Checklists;
 
 class ModulesDashboardController extends Controller {
 
@@ -51,24 +52,61 @@ class ModulesDashboardController extends Controller {
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
+        "setup_store" => [
+            "module" => "ecommerce",
+            "title" => "Setup your <strong>online store details</strong>",
+            "description" => "so customers can visit your store directly",
+            "button_title" => "Setup Store Address",
+            "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
+            "verification" => false,
+            "verification_method" => ""
+        ],
         "create_product" => [
+            "module" => "sales",
             "title" => "Create your first <strong>product</strong>",
-            "description" => "so your customers have something to buy :-)",
+            "description" => "so your customers have something to buy",
             "button_title" => "Create Product",
-            "button_path" => "/",
-            "status" => true
+            "button_path" => "/msl/sales-products?getting_started=create_product",
+            "status" => true,
+            "verification" => false,
+            "verification_method" => "checkProducts"
         ],
-        "setup_bank_account" => [
-            "title" => "Setup your <strong>bank account</strong>",
-            "description" => "so you can be paid for orders :-)",
-            "button_title" => "Provide Bank Account",
-            "button_path" => "/",
-        ],
-        "setup_shipping_pickup" => [
+        // "create_customer" => [
+        //    "module" => "customers",
+        //     "title" => "Add your first <strong>customer</strong>",
+        //     "description" => "someone that has bought something from you before",
+        //     "button_title" => "Create Product",
+        //     "button_path" => "/msl/products?getting_started=create_product",
+        //     "status" => true,
+        //     "verification" => false,
+        //     "verification_method" => "checkProducts"
+        // ],
+        "setup_pickup_address" => [
+            "module" => "ecommerce",
             "title" => "Setup your <strong>pickup address</strong>",
             "description" => "so delivery driver can get to you when items are ordered :-)",
             "button_title" => "Setup Shipping Address",
-            "button_path" => "/",
+            "button_path" => "/mse/settings-business?getting_started=setup_pickup_address",
+            "verification" => false,
+            "verification_method" => "checkPickupAddress"
+        ],
+        // "setup_online_payment" => [
+        //     "module" => "ecommerce",
+        //     "title" => "Setup your <strong>online payment</strong>",
+        //     "description" => "so customers can pay you by card",
+        //     "button_title" => "Setup Online Payment",
+        //     "button_path" => "/",
+        //     "verification" => false,
+        //     "verification_method" => "checkOnlinePayment"
+        // ],
+        "setup_bank_account" => [
+            "module" => "settings",
+            "title" => "Setup your <strong>bank account</strong>",
+            "description" => "so order payments can be sent to your bank account",
+            "button_title" => "Provide Bank Account",
+            "button_path" => "/mse/settings-banking?getting_started=setup_bank_account",
+            "verification" => false,
+            "verification_method" => "checkBankAccounts"
         ],
     ];
 
@@ -349,17 +387,17 @@ class ModulesDashboardController extends Controller {
         // PROCESS CHECKLISTS
         $checklists = [];
 
-        $checklists = $this->processChecklists($user_dashboard_status);
+        $checklists = $this->processChecklists($request, $sdk, $user_dashboard_status);
 
-        $completion = 0;
-        foreach ($checklists as $cKey => $cValue) {
-            $completion += !empty($cValue['status']) ? 1 : 0;
-        }
+        $count = collect($checklists)->count();
+        $done = collect($checklists)->where('verification', true)->count();
 
         $this->data['checklists'] = [
             'checklists' => $checklists,
             "meta" => [
-                "score" => floor( ($completion / count($checklists)) * 100 )
+                "done" => $done,
+                "count" => $count,
+                "score" => round( ($done / $count) * 100 )
             ]
         ];
         
@@ -371,6 +409,9 @@ class ModulesDashboardController extends Controller {
             'documentation' => env('SETTINGS_DASHBOARD_DOCUMENTATION', 'https://docs.dorcas.io'),
             'videos' => env('SETTINGS_DASHBOARD_VIDEOS', 'https://youtube.com'),
         ];
+
+        $this->data['mobileCompanionURL'] = env('SETTINGS_MOBILE_COMPANION_URL', 'https://play.google.com/store/apps/details?id=com.hostville.dorcashub');
+        $this->data['bridgeDetails'] = $this->getBridgeDetails($request, $sdk);
 
         return view($template, $this->data);
     }
@@ -689,21 +730,57 @@ class ModulesDashboardController extends Controller {
 
     /**
      * @param array $userStatus
+     * @param Request $request
+     * @param Sdk $sdk
      *
      * @return array
      */
-    protected function processChecklists(array $userDashboardStatus): array
+    protected function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus): array
     {
         $checklists = self::GETTING_STARTED_CHECKLISTS;
 
         // process the checklists
         $checklistsKeys = array_keys($checklists);
         foreach ($checklists as $cKey => $cValue) {
-            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
             $checklists[$cKey]["index"] = array_search($cKey, $checklistsKeys) + 1;
+            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+
+            if (isset($checklists[$cKey]["verification_method"]) && !empty($checklists[$cKey]["verification_method"])) {
+                $method = $checklists[$cKey]["verification_method"];
+                $c = new Checklists($request, $sdk);
+                $verify = $c->$method();
+                $checklists[$cKey]["verification"] = $verify;
+            }
         }
         return $checklists;
     }
+
+
+    
+    /**
+     * @param Request $request
+     * @param Sdk $sdk
+     *
+     * @return array
+     */
+    protected function getBridgeDetails(Request $request, Sdk $sdk): array
+    {
+
+        $user = $request->user();
+        $company = $user->company(true, true);
+
+        // you can connect to bridge and fetch live details and return
+
+        // ttemporary details
+        return [
+            'partnerID' => "HUB",
+            'otherParam' => "gbas"
+        ];
+        
+    }
+
+
+
 
     /**
      * @param string $checkListKey
@@ -711,15 +788,44 @@ class ModulesDashboardController extends Controller {
      *
      * @return array
      */
-    protected function processChecklistsXhr(string $checkListKey, array $payload): array
+    protected function processDashboard(Request $request): array
     {
-        $checklists = self::GETTING_STARTED_CHECKLISTS;
+        $type = $request->type;
+        $payload = $request->payload;
 
-        // process the checklists
-        foreach ($checklists as $cKey => $cValue) {
-            $checklists[$cKey]["status"] = isset($userDashboardStatus['checklists'][$cKey]) && !empty($userDashboardStatus['checklists'][$cKey]) ? true : false;
+        $response = [
+            "status" => false,
+            "message" => ""
+        ];
+
+        switch($type) {
+
+            case "update-preferences":
+
+                $preference = $payload["preference"] ?? '';
+                $value = $payload["value"] ?? '';
+
+                if ( !empty($preference) && !empty($value) ) {
+
+                    $dorcasUser = $request->user();
+                    //$company = $dorcasUser->company(true, true);
+
+                    $cacheKey = 'userDashboardStatus.' . $dorcasUser->id;
+            
+                    $user_dashboard_status = Cache::get($cacheKey);
+
+                    $user_dashboard_status["preferences"]["guide_needed"] = $value;
+
+                    Cache::forever($cacheKey, $user_dashboard_status);
+
+                } else {
+
+                    $response["message"] = "Invalid Preference";
+                    
+                }
+
+                break;
         }
-        return $checklists;
     }
 
 

@@ -56,6 +56,26 @@
         white-space: nowrap!important;
         border: 0!important;
     }
+
+    .btn-action.show {
+        color: #206bc4;
+    }
+
+    .btn-action.show, .btn-action:hover {
+        color: #1e293b;
+        background: #f5f7fb;
+    }
+    .btn-action {
+        padding: 0;
+        border: 0;
+        color: #626976;
+        display: inline-flex;
+        width: 2rem;
+        height: 2rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
 </style>
 @endsection
 
@@ -63,8 +83,11 @@
 @section('body_content_main')
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
+
         <div class="row">
             <div class="col-sm-12 col-md-6"  v-if="!user.is_verified">
+
+
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -77,11 +100,20 @@
             </div>
 
             <div class="col-sm-12 col-md-6">
-                    <div class="alert-success alert mb-0">
-                        <div class="d-flex align-items-center alert-success">
+
+{{--                    <div class="alert-success alert mb-0">--}}
+{{--                        <div class="d-flex align-items-center alert-success">--}}
+{{--                            <div class="flex-fill ms-3 text-truncate">--}}
+{{--                                <h4> Partner ID Access on Mobile :</h4>--}}
+{{--                                <h4 > Partner ID :   {{$partner_id}}</h4><br><br>--}}
+
+                    <div class="alert-info alert mb-0">
+                        <div class="d-flex align-items-center alert-info">
                             <div class="flex-fill ms-3 text-truncate">
-                                <h4> Partner ID Access on Mobile :</h4>
-                                <h4 > Partner ID :   {{$partner_id}}</h4><br><br>
+                                <h4>Manage Invoicing, Orders & Sales on the go!</h4>
+                                <span class="small">If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
+                                <br><br>
+                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                             </div>
                         </div>
                     </div>
@@ -102,211 +134,212 @@
 {{--                @endif--}}
 {{--            </div>--}}
         </div>
+
         <br>
+
         <div class="row">
                 @include('layouts.blocks.tabler.alert')
         </div>
+    
 
-    <div class="row row-cards row-deck" id="dashboard-statistics">
-    	@foreach ($summary as $figures)
-	    	<div class="col-6 col-sm-4 col-lg-2">
-	    		<div class="card p-3">
-	    			<div class="d-flex align-items-center">
-	    				<span class="stamp stamp-md {{ $figures['bg'] }} mr-3">
-	    					<i class="{{ $figures['icon'] }}"></i>
-	    				</span>
-	    				<div>
-	    					<h4 class="m-0"><a href="javascript:void(0)">{{ $figures['count_formatted'] }} <small>{{ title_case($figures['name']) }}</small></a></h4>
-	    					<!-- <small class="text-muted">learn more</small> -->
-	    				</div>
-	    			</div>
-	    		</div>
-	    	</div>
-	    @endforeach
-    </div>
-
-
-	<div class="alert alert-avatar alert-primary alert-dismissible">
-	  <span class="avatar" style="background-image: url({{ \Illuminate\Support\Facades\Auth::user()->photo }})"></span>
-	    <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
-	</div>
-
-    <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed">
-        <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Welcome to the <em>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</em></h3>
+        <div class="row row-cards row-deck" id="dashboard-statistics">
+            @foreach ($summary as $figures)
+                <div class="col-6 col-sm-4 col-lg-2">
+                    <div class="card p-3">
+                        <div class="d-flex align-items-center">
+                            <span class="stamp stamp-md {{ $figures['bg'] }} mr-3">
+                                <i class="{{ $figures['icon'] }}"></i>
+                            </span>
+                            <div>
+                                <h4 class="m-0"><a href="javascript:void(0)">{{ $figures['count_formatted'] }} <small>{{ title_case($figures['name']) }}</small></a></h4>
+                                <!-- <small class="text-muted">learn more</small> -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                	<div id="welcome-message">
-                        Welcome! It appears you are new here. It's easy to start using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
-                        <br/></br>
-                        Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
-                        <br/></br>
-                        If you still need any help after that, you can:
-                        <ul>
-                            <li>View <a href="#" v-on:click.prevent="launchHelpCentre">Help Centre</a></li>
-                            <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
-                            <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
-                        </ul>
+            @endforeach
+        </div>
+
+
+        <div class="alert alert-avatar alert-primary alert-dismissible">
+            <span class="avatar" style="background-image: url({{ \Illuminate\Support\Facades\Auth::user()->photo }})"></span>
+            <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
+        </div>
+
+        <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed">
+            
+            <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Welcome to the <em>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</em></h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="welcome-message">
+                            Welcome! It appears you are new here. It's easy to start using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
+                            <br/></br>
+                            Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
+                            <br/></br>
+                            If you still need any help after that, you can:
+                            <ul>
+                                <li>View <a href="#" v-on:click.prevent="launchHelpCentre">Help Centre</a></li>
+                                <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
+                                <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-12 col-md-6 col-lg-8" id="new-user-checklist">
-            
-            <div class="row ">
-                <!-- Check List Header Starts -->
-                <div class="col-12">
-                    <div class="card ">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-3">
-                                    <img src="https://cdn.dribbble.com/users/844826/screenshots/14547977/media/e7749bd1b09d9415b8dc265a7dbe81f6.png" alt="Projects Dashboards" class="rounded">
-                                </div>
-                                <div class="col">
-                                    <h3 class="card-title mb-1">
-                                        <a href="#" class="text-reset">Getting Started Checklist</a>
-                                    </h3>
-                                    <div class="text-muted">
-                                        Updated 2 hours ago
+            <div class="col-sm-12 col-md-6 col-lg-8" id="new-user-checklist">
+                
+                <div class="row">
+                    <!-- Check List Header Starts -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-3">
+                                        <img src="https://cdn.dribbble.com/users/844826/screenshots/14547977/media/e7749bd1b09d9415b8dc265a7dbe81f6.png" alt="Projects Dashboards" class="rounded">
                                     </div>
-                                    <div class="mt-3">
-                                        <div class="row g-2 align-items-center">
-                                            <div class="col-auto">
-                                                {{ $checklists['meta']['score'] }}%
-                                            </div>
-                                            <div class="col">
-                                                <div class="progress progress-sm">
-                                                    <div class="progress-bar" style="width: {{ $checklists['meta']['score'] }}%" role="progressbar" aria-valuenow="{{ $checklists['meta']['score'] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ $checklists['meta']['score'] }}% Complete">
-                                                        <span class="visually-hidden">{{ $checklists['meta']['score'] }}% Complete</span>
+                                    <div class="col">
+                                        <h3 class="card-title mb-1">
+                                            <a href="#" class="text-reset">Getting Started Checklist</a>
+                                        </h3>
+                                        <div class="text-muted">
+                                            {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks completed.
+                                        </div>
+                                        <div class="mt-3">
+                                            <div class="row g-2 align-items-center">
+                                                <div class="col-auto">
+                                                    {{ $checklists['meta']['score'] }}%
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm">
+                                                        <div class="progress-bar" style="width: {{ $checklists['meta']['score'] }}%" role="progressbar" aria-valuenow="{{ $checklists['meta']['score'] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ $checklists['meta']['score'] }}% Complete">
+                                                            <span class="visually-hidden">{{ $checklists['meta']['score'] }}% Complete</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="dropdown">
-                                        <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="#" class="dropdown-item">Import</a>
-                                            <a href="#" class="dropdown-item">Export</a>
-                                            <a href="#" class="dropdown-item">Download</a>
-                                            <a href="#" class="dropdown-item text-danger">Delete</a>
+                                    <div class="col-auto">
+                                        <div class="dropdown">
+                                            <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a href="#" class="dropdown-item">Status</a>
+                                                <a href="#" class="dropdown-item text-danger" v-on:click.prevent="dashboardPanelRemove">Remove</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Check List Header Ends -->
+                    <!-- Check List Header Ends -->
 
-                <!-- Scrollable Checklist Starts -->
-                <div class="col-12">
-                    <div class="card" style="height: 28rem">
-                        <div class="card-body card-body-scrollable card-body-scrollable-shadow">
-                            <div class="divide-y">
-                                @foreach ($checklists['checklists'] as $checklist)
-                                    <div>
-                                        <div class="row">
-                                            <div class="col-auto" style="vertical-align: middle;">
-                                                <span class="w-1 pe-0" style="vertical-align: middle;">
-                                                    <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['status'] ? 'checked' : '' }}>
-                                                </span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="avatar">{{ $checklist['index'] }}</span>
-                                            </div>
-                                            <div class="col">
-                                                <div class="text-truncate">
-                                                    {!! $checklist['title'] !!}
+                    <!-- Scrollable Checklist Starts -->
+                    <div class="col-12">
+                        <div class="card" style="height: 28rem">
+                            <div class="card-body card-body-scrollable card-body-scrollable-shadow">
+                                <div class="divide-y">
+                                    @foreach ($checklists['checklists'] as $checklist)
+                                        <div>
+                                            <div class="row">
+                                                <div class="col-auto" style="vertical-align: middle;">
+                                                    <span class="w-1" style="vertical-align: middle;">
+                                                        <input disabled readonly type="checkbox" class="form-check-input m-0 align-middle" aria-label="Checklist Done" {{ $checklist['verification'] ? 'checked' : '' }} />
+                                                    </span>
                                                 </div>
-                                                <div class="text-muted">{!! ($checklist['description']) !!}</div>
-                                            </div>
-                                            <div class="col align-self-center">
-                                                <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
-                                                    {{ $checklist['button_title'] }}
-                                                </a>
-                                            </div>
-                                            <div class="col-auto align-self-center">
-                                                <div class="badge bg-success"></div>
+                                                <div class="col-auto">
+                                                    <span class="avatar">{{ $checklist['index'] }}</span>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="text-truncate">
+                                                        {!! $checklist['title'] !!}
+                                                    </div>
+                                                    <div class="text-muted">{!! ($checklist['description']) !!}</div>
+                                                </div>
+                                                <div class="col align-self-center">
+                                                    <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
+                                                        {{ $checklist['button_title'] }}
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto align-self-center">
+                                                    <div class="badge {{ $checklist['verification'] ? 'bg-success' : 'bg-danger' }}"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Scrollable Checklist Ends -->
+
                 </div>
-                <!-- Scrollable Checklist Ends -->
 
             </div>
-
         </div>
-        @include('modules-dashboard::modals.message')
-    </div>
 
-    <div class="row row-cards row-deck" id="dashboard-data">
-        <div class="col-sm-12 col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Orders <em>(last 2 weeks)</em></h3>
-                </div>
-                <div class="card-body">
-                	<div id="chart-sales-graph" style="height: 20rem"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-6">
-            <div class="row">
+        <div class="row row-cards row-deck" id="dashboard-data">
+            <div class="col-sm-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Apps</h3>
+                        <h3 class="card-title">Orders <em>(last 2 weeks)</em></h3>
                     </div>
                     <div class="card-body">
-		                <div class="table-responsive" v-if="applications.length > 0">
-		                    <table class="table card-table table-striped table-vcenter">
-		                        <tbody>
-		                            <tr v-for="(app, index) in applications" :key="app.id">
-		                                <td class="w-1">
-		                                    <span class="avatar">@{{ app.name.substr(0, 1) }}</span>
-		                                </td>
-		                                <td>
-                                            <p>@{{ app.name }}</p>
-                                            <small class="text-muted">@{{ app.description }}</small>
-                                        </td>
-		                                <td><a href="#" v-on:click.prevent="launchApp(index)" class="btn btn-sm btn-outline-success ml-3">Launch</a></td>
-		                            </tr>
-		                        </tbody>
-		                    </table>
-		                </div>
-					    <div class="row row-cards row-deck" v-if="applications.length === 0 && !apps_fetching">
-					        <div class="col-sm-12">
-					            @component('layouts.blocks.tabler.empty-card')
-					                @slot('buttons')
-					                    <div class="btn-list text-center">
-					                        <a href="{{ safe_href_route('app-store-main') ? route('app-store-main').'#apps_apps-store' : '#' }}" class="btn btn-primary">Explore App Store</a>
-					                    </div>
-					                @endslot
-					                You have no Apps installed
-					            @endcomponent
-					        </div>
-					    </div>
-                        <div class="row" v-if="applications.length === 0 && apps_fetching">
-                          <div class="loader"></div>
-                          <div>Loading Apps</div>
-                        </div>
-
+                        <div id="chart-sales-graph" style="height: 20rem"></div>
                     </div>
                 </div>
             </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Apps</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" v-if="applications.length > 0">
+                                <table class="table card-table table-striped table-vcenter">
+                                    <tbody>
+                                        <tr v-for="(app, index) in applications" :key="app.id">
+                                            <td class="w-1">
+                                                <span class="avatar">@{{ app.name.substr(0, 1) }}</span>
+                                            </td>
+                                            <td>
+                                                <p>@{{ app.name }}</p>
+                                                <small class="text-muted">@{{ app.description }}</small>
+                                            </td>
+                                            <td><a href="#" v-on:click.prevent="launchApp(index)" class="btn btn-sm btn-outline-success ml-3">Launch</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row row-cards row-deck" v-if="applications.length === 0 && !apps_fetching">
+                                <div class="col-sm-12">
+                                    @component('layouts.blocks.tabler.empty-card')
+                                        @slot('buttons')
+                                            <div class="btn-list text-center">
+                                                <a href="{{ safe_href_route('app-store-main') ? route('app-store-main').'#apps_apps-store' : '#' }}" class="btn btn-primary">Explore App Store</a>
+                                            </div>
+                                        @endslot
+                                        You have no Apps installed
+                                    @endcomponent
+                                </div>
+                            </div>
+                            <div class="row" v-if="applications.length === 0 && apps_fetching">
+                                <div class="loader"></div>
+                                <div>Loading Apps</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @include('modules-dashboard::modals.message')
         </div>
-        @include('modules-dashboard::modals.message')
     </div>
 
 @endsection
@@ -370,6 +403,30 @@
 
             },
             methods: {
+                dashboardPanelRemove: function() {
+                    this.userDashboardStatus.preferences.guide_needed = false;
+                },
+                processDashboard: function(processType, processPayload) {
+                    axios.post("/dashboard/process-dashboard", {
+                        type: processType,
+                        payload: processPayload
+                    })
+                        .then(function (response) {
+                            //swal('Title', 'Description', 'success');
+                        }).catch(function (error) {
+                            var message = '';
+                            if (error.response) {
+                                var e = error.response;
+                                message = e.data.message;
+                            } else if (error.request) {
+                                message = 'The request was made but no response was received';
+                            } else {
+                                message = error.message;
+                            }
+                            context.verifying = false;
+                            swal("Oops!", message, "warning");
+                        });
+                },
                 account_expired: function() {
                     var expireString = 'account subscription expired'
                     var url = document.location.toString();
