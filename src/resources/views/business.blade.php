@@ -77,16 +77,17 @@
             </div>
 
             <div class="col-sm-12 col-md-6">
-                @component('layouts.blocks.tabler.alert-with-buttons')
-                    @slot('title')
-                       Partner ID to gain access to the Mobile platform :
-                    @endslot
-                      Partner ID :   {{$partner_id}}
-                    @slot('buttons')
-                        <button v-on:click.prevent="resendVerification" class="btn btn-secondary" :class="{'btn-loading':verifying}" type="button">Send Verification Email</button>
-                    @endslot
-                @endcomponent
+                    <div class="alert-success alert mb-0">
+                        <div class="d-flex align-items-center alert-success">
+                            <div class="flex-fill ms-3 text-truncate">
+                                <h4> Partner ID Access on Mobile :</h4>
+                                <h4 > Partner ID :   {{$partner_id}}</h4><br><br>
+                            </div>
+                        </div>
+                    </div>
             </div>
+
+
 {{--            <div class="col-sm-12 col-md-6">--}}
 {{--                @if(count($bank_accounts) <  0)--}}
 {{--                    <div class="alert-danger alert mb-0">--}}
