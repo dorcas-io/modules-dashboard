@@ -770,6 +770,8 @@ class ModulesDashboardController extends Controller {
     {
 
         $user = $request->user();
+
+
         $company = $user->company(true, true);
 
         $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
@@ -779,16 +781,17 @@ class ModulesDashboardController extends Controller {
         if (!isset($data['errors'])) {
 
             return [
-                'partnerID' =>  $data,
+                'partnerID' => trtoupper($data),
                 'data' => $data
             ];
 
         } else {
             return [
-                'partnerID' =>  "HUB",
+                'partnerID' =>  strtoupper("HUB"),
                 'data' => $data
             ];
         }
+
         
     }
 
