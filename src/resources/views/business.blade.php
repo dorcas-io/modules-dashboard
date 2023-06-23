@@ -56,6 +56,26 @@
         white-space: nowrap!important;
         border: 0!important;
     }
+
+    .btn-action.show {
+        color: #206bc4;
+    }
+
+    .btn-action.show, .btn-action:hover {
+        color: #1e293b;
+        background: #f5f7fb;
+    }
+    .btn-action {
+        padding: 0;
+        border: 0;
+        color: #626976;
+        display: inline-flex;
+        width: 2rem;
+        height: 2rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
 </style>
 @endsection
 
@@ -77,17 +97,18 @@
                 @endcomponent
             </div>
             <div class="col-sm-12 col-md-6">
-                @if(count($bank_accounts) <  0)
-                    <div class="alert-danger alert mb-0">
-                        <div class="d-flex align-items-center alert-danger">
+                    <div class="alert-info alert mb-0">
+                        <div class="d-flex align-items-center alert-info">
                             <div class="flex-fill ms-3 text-truncate">
-                                <h4>Business Bank Details Yet To be Added</h4>
-                                <span class="small">The Business is yet to add Bank Details ,Payment can not be processed</span><br><br>
-                                <a href="{{url('mse/settings-banking')}}" class="btn btn-danger">Add Bank Details</a>
+                                <h4>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }} Mobile Companion</h4>
+                                <span class="small">You can manage your sales, orders & invoicing on the go!</span>
+                                <br><br>
+                                <span class="small">Your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong>. You will need this during installation</span>
+                                <br><br>
+                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                             </div>
                         </div>
                     </div>
-                @endif
             </div>
         </div>
 

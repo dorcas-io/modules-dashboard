@@ -402,6 +402,9 @@ class ModulesDashboardController extends Controller {
             'videos' => env('SETTINGS_DASHBOARD_VIDEOS', 'https://youtube.com'),
         ];
 
+        $this->data['mobileCompanionURL'] = env('SETTINGS_MOBILE_COMPANION_URL', 'https://play.google.com/store/apps/details?id=com.hostville.dorcashub');
+        $this->data['bridgeDetails'] = $this->getBridgeDetails($request, $sdk);
+
         return view($template, $this->data);
     }
     
@@ -745,6 +748,33 @@ class ModulesDashboardController extends Controller {
         }
         return $checklists;
     }
+
+
+    
+    /**
+     * @param Request $request
+     * @param Sdk $sdk
+     *
+     * @return array
+     */
+    protected function getBridgeDetails(Request $request, Sdk $sdk): array
+    {
+
+        $user = $request->user();
+        $company = $user->company(true, true);
+
+        // you can connect to bridge and fetch live details and return
+
+        // ttemporary details
+        return [
+            'partnerID' => "HUB",
+            'otherParam' => "gbas"
+        ];
+        
+    }
+
+
+
 
     /**
      * @param string $checkListKey
