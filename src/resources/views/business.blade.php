@@ -220,7 +220,7 @@
                         <div class="card" style="height: 28rem">
                             <div class="card-body card-body-scrollable card-body-scrollable-shadow">
                                 <div class="divide-y">
-                                    @foreach ($checklists['checklists'] as $checklistK => checklist)
+                                    @foreach ($checklists['checklists'] as $checklistK => $checklist)
                                         <div>
                                             <div class="row">
                                                 <div class="col-auto" style="vertical-align: middle;">
