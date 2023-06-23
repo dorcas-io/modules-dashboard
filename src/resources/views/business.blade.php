@@ -86,8 +86,6 @@
 
         <div class="row">
             <div class="col-sm-12 col-md-6"  v-if="!user.is_verified">
-
-
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -98,41 +96,18 @@
                     @endslot
                 @endcomponent
             </div>
-
             <div class="col-sm-12 col-md-6">
-
-{{--                    <div class="alert-success alert mb-0">--}}
-{{--                        <div class="d-flex align-items-center alert-success">--}}
-{{--                            <div class="flex-fill ms-3 text-truncate">--}}
-{{--                                <h4> Partner ID Access on Mobile :</h4>--}}
-{{--                                <h4 > Partner ID :   {{$partner_id}}</h4><br><br>--}}
-
-                    <div class="alert-info alert mb-0">
-                        <div class="d-flex align-items-center alert-info">
-                            <div class="flex-fill ms-3 text-truncate">
-                                <h4>Manage Invoicing, Orders & Sales on the go!</h4>
-                                <span class="small">If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
-                                <br><br>
-                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
-                            </div>
+                <div class="alert-info alert mb-0">
+                    <div class="d-flex align-items-center alert-info">
+                        <div class="flex-fill ms-3 text-truncate">
+                            <h4>Manage Invoicing, Orders & Sales on the go!</h4>
+                            <span class="small">If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"]}}</strong></span>
+                            <br><br>
+                            <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                         </div>
                     </div>
+                </div>
             </div>
-
-
-{{--            <div class="col-sm-12 col-md-6">--}}
-{{--                @if(count($bank_accounts) <  0)--}}
-{{--                    <div class="alert-danger alert mb-0">--}}
-{{--                        <div class="d-flex align-items-center alert-danger">--}}
-{{--                            <div class="flex-fill ms-3 text-truncate">--}}
-{{--                                <h4>Business Bank Details Yet To be Added</h4>--}}
-{{--                                <span class="small">The Business is yet to add Bank Details ,Payment can not be processed</span><br><br>--}}
-{{--                                <a href="{{url('mse/settings-banking')}}" class="btn btn-danger">Add Bank Details</a>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                @endif--}}
-{{--            </div>--}}
         </div>
 
         <br>

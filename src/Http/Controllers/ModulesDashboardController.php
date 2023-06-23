@@ -336,10 +336,10 @@ class ModulesDashboardController extends Controller {
             $response = $sdk->createCompanyService()->send('GET', ['status']);
 
 
-           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
-
-
-           $this->data['partner_id'] = $response->getData();
+//           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
+//
+//
+//           $this->data['partner_id'] = $response->getData();
 
 
 //            # get the company status
@@ -769,11 +769,17 @@ class ModulesDashboardController extends Controller {
         $user = $request->user();
         $company = $user->company(true, true);
 
+        $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
+
+
+//        $this->data['partner_id'] = $response->getData();
+
+
         // you can connect to bridge and fetch live details and return
 
         // ttemporary details
         return [
-            'partnerID' => "HUB",
+            'partnerID' => $response->getData() ?? "HUB",
             'otherParam' => "gbas"
         ];
         
