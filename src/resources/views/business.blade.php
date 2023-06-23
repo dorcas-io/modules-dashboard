@@ -100,10 +100,8 @@
                     <div class="alert-info alert mb-0">
                         <div class="d-flex align-items-center alert-info">
                             <div class="flex-fill ms-3 text-truncate">
-                                <h4>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }} Mobile Companion</h4>
-                                <span class="small">You can manage your sales, orders & invoicing on the go!</span>
-                                <br><br>
-                                <span class="small">Your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong>. You will need this during installation</span>
+                                <h4>Manage Invoicing, Orders & Sales on the go!</h4>
+                                <span>If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
                                 <br><br>
                                 <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                             </div>
