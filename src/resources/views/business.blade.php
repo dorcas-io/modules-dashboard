@@ -83,9 +83,9 @@
 @section('body_content_main')
 
     <div class="container hopscotch-tour-box" data-tour-name="dashboard" id="dashboard">
-        
-        <div class="row" v-if="!user.is_verified">
-            <div class="col-sm-12 col-md-6">
+
+        <div class="row">
+            <div class="col-sm-12 col-md-6"  v-if="!user.is_verified">
                 @component('layouts.blocks.tabler.alert-with-buttons')
                     @slot('title')
                         Account Verification Pending
@@ -97,16 +97,16 @@
                 @endcomponent
             </div>
             <div class="col-sm-12 col-md-6">
-                    <div class="alert-info alert mb-0">
-                        <div class="d-flex align-items-center alert-info">
-                            <div class="flex-fill ms-3 text-truncate">
-                                <h4>Manage Invoicing, Orders & Sales on the go!</h4>
-                                <span>If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
-                                <br>
-                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
-                            </div>
+                <div class="alert-info alert mb-0">
+                    <div class="d-flex align-items-center alert-info">
+                        <div class="flex-fill ms-3 text-truncate">
+                            <h4>Manage Invoicing, Orders & Sales on the go!</h4>
+                            <span>If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"]}}</strong></span>
+                            <br>
+                            <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
 

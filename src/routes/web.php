@@ -9,7 +9,11 @@ Route::group(['namespace' => 'Dorcas\ModulesDashboard\Http\Controllers', 'prefix
 	Route::post('/resend-verification', 'ModulesDashboardController@resendVerification');
 	Route::get('/faqs', 'ModulesDashboardController@faqs');
 
+    Route::get('fetch-token' , 'ModulesDashboardController@fetchToken');
+
+
 	Route::post('/process-dashboard', 'ModulesDashboardController@processDashboard')->name('process-dashboard');
+
 });
 
 ?>

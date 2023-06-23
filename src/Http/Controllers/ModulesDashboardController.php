@@ -337,7 +337,15 @@ class ModulesDashboardController extends Controller {
 
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
-            # get the company status
+
+
+//           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
+//
+//
+//           $this->data['partner_id'] = $response->getData();
+
+
+//            # get the company status
 
             //$summary_aspects = ['employees', 'customers', 'orders'];
             $summary_aspects = ['customers', 'orders'];
@@ -471,8 +479,6 @@ class ModulesDashboardController extends Controller {
                                                 ->addBodyParam('extra_data', $configurations)
                                                 ->send('PUT');
 
-
-            //Cache::forget('business.employees.'.$company->id);                                     
 
             # send the request
             if (!$query->isSuccessful()) {
@@ -766,11 +772,17 @@ class ModulesDashboardController extends Controller {
         $user = $request->user();
         $company = $user->company(true, true);
 
+        $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
+
+
+//        $this->data['partner_id'] = $response->getData();
+
+
         // you can connect to bridge and fetch live details and return
 
         // ttemporary details
         return [
-            'partnerID' => "HUB",
+            'partnerID' => $response->getData() ?? "HUB",
             'otherParam' => "gbas"
         ];
         
