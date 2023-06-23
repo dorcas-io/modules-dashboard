@@ -101,9 +101,9 @@
                         <div class="d-flex align-items-center alert-info">
                             <div class="flex-fill ms-3 text-truncate">
                                 <h4>Manage Invoicing, Orders & Sales on the go!</h4>
-                                <span>If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
+                                <span class="small">If requested during setup, your Partner ID is: <strong>{{ $bridgeDetails["partnerID"] }}</strong></span>
                                 <br><br>
-                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info btn-sm">Download Mobile Companion</a>
+                                <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                             </div>
                         </div>
                     </div>
