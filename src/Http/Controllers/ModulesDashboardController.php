@@ -52,16 +52,6 @@ class ModulesDashboardController extends Controller {
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
-        "setup_store" => [
-            "module" => ["ecommerce"],
-            "title" => "Setup your <strong>online store details</strong>",
-            "description" => "Add important details for your customers",
-            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers",
-            "button_title" => "Setup Store Address",
-            "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
-            "verification" => false,
-            "verification_method" => ""
-        ],
         "create_product" => [
             "module" => ["sales"],
             "title" => "Create your first <strong>product</strong>",
@@ -110,6 +100,16 @@ class ModulesDashboardController extends Controller {
             "button_path" => "/mse/settings-banking?getting_started=setup_bank_account",
             "verification" => false,
             "verification_method" => "checkBankAccounts"
+        ],
+        "setup_store" => [
+            "module" => ["ecommerce"],
+            "title" => "Setup your <strong>online store details</strong>",
+            "description" => "Add basic data, payment and logistics settings",
+            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers",
+            "button_title" => "Setup Store Details",
+            "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
+            "verification" => false,
+            "verification_method" => "checkOnlineStore"
         ],
     ];
 

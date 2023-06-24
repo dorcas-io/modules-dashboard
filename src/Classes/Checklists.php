@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use GuzzleHttp\Exception\ServerException;
 use App\Http\Controllers\Controller;
+use Dorcas\ModulesEcommerce\Http\Controllers\ModulesEcommerceStoreController;
 
 class Checklists {
 
@@ -44,6 +45,21 @@ class Checklists {
     {
         $bank_accounts = $this->controller->getBankAccounts($this->sdk);
         return $bank_accounts->count() > 0;
+    }
+
+    public function checkOnlineStore() : bool
+    {
+        $company = $this->request->user()->company(true, true);
+        
+        $storeSettings = ModulesEcommerceStoreController::getStoreSettings((array) $company->extra_data);
+        $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
+        $paymentSettings = ModulesEcommerceStoreController::getPaymentsSettings((array) $company->extra_data);
+        
+        $storeSettingsFilled = $storeSettings;
+        $paymentSettingsFilled = $logisticsSettings;
+        $paymentSettingsFilled = $paymentSettings;
+        
+        return !empty($paymentSettings);
     }
 
     public function checkBankAccounts() : bool
