@@ -101,8 +101,8 @@
                     <div class="d-flex align-items-center alert-info">
                         <div class="flex-fill ms-3 text-truncate">
                             <h4>Manage Invoicing, Orders & Sales on the go!</h4>
-                            <span>If requested during setup, your Partner ID is: <strong>{{ strtoupper($bridgeDetails["partnerID"])}}</strong></span>
-                            <br><br>
+                            <span>If requested during setup, your Organizational ID is: <strong>{{ $bridgeDetails["partnerID"]}}</strong></span>
+                            <br/><br/>
                             <a href="{{ $mobileCompanionURL }}" target="_blank" class="btn btn-info">Download Mobile Companion</a>
                         </div>
                     </div>
@@ -235,11 +235,11 @@
                                                     <div class="text-truncate">
                                                         {!! $checklist['title'] !!}
                                                     </div>
-                                                    <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" on-click:prevent.click="showWhy('{{ $checklistK }}')">Why?</a></div>
+                                                    <div class="text-muted">{!! ($checklist['description']) !!} <a href="#" v-on:click.prevent="showWhy('{{ $checklistK }}')">Why?</a></div>
                                                 </div>
                                                 <div class="col align-self-center">
-                                                    <a href="{{ $checklist['button_path'] }}" class="btn btn-light btn-square w-100">
-                                                        {{ $checklist['button_title'] }}
+                                                    <a href="{{ $checklist['verification'] ? '#' : $checklist['button_path'] }}" class="btn {{ $checklist['verification'] ? 'btn-light disabled' : 'btn-primary' }} btn-pill w-100">
+                                                        {{ $checklist['verification'] ? 'COMPLETED' : $checklist['button_title'] }}
                                                     </a>
                                                 </div>
                                                 <div class="col-auto align-self-center">
@@ -387,7 +387,7 @@
                     let currentChecklist = this.checklists.checklists.find( checklist, index => index==checklistIndex);
 
                     //reset Message
-                    this.dashboard_message: { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' };
+                    this.dashboard_message = { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' };
 
                     this.dashboard_message.title = "Why " + currentChecklist.title
                     this.dashboard_message.body = "<p>" + currentChecklist.why + "</p>"
