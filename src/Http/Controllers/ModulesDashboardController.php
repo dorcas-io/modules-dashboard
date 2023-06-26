@@ -781,7 +781,7 @@ class ModulesDashboardController extends Controller {
         if (!isset($data['errors'])) {
 
             return [
-                'partnerID' => trtoupper($data),
+                'partnerID' => strtoupper($data),
                 'data' => $data
             ];
 
