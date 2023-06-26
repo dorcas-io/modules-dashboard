@@ -372,10 +372,6 @@
                     this.searchAppStore(1, 12, 'installed_only');
                 }*/
                 this.searchAppStore(1, 12, 'installed_only');
-                //console.log(this.account_expired())
-                //console.log(this.applications)
-                
-                //console.log(this.salesGraph);
 
             },
             methods: {
@@ -384,15 +380,15 @@
                 },
                 showWhy: function(checklistIndex) {
 
-                    let currentChecklist = this.checklists.checklists.find( checklist, index => index==checklistIndex);
+                    let currentChecklist = Object.entries(this.checklists.checklists).find( ([index]) => index == checklistIndex);
 
                     //reset Message
                     this.dashboard_message = { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' };
 
-                    this.dashboard_message.title = "Why " + currentChecklist.title
-                    this.dashboard_message.body = "<p>" + currentChecklist.why + "</p>"
-                    this.dashboard_message.action = currentChecklist.button_title
-                    this.dashboard_message.action_url = currentChecklist.button_path
+                    this.dashboard_message.title = "Why " + currentChecklist[1].title
+                    this.dashboard_message.body = "<p>" + currentChecklist[1].why + "</p>"
+                    this.dashboard_message.action = currentChecklist[1].button_title
+                    this.dashboard_message.action_url = currentChecklist[1].button_path
                     $('#dashboard-message-modal').modal('show'); 
                 },
                 processDashboard: function(processType, processPayload) {

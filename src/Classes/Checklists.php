@@ -59,21 +59,15 @@ class Checklists {
         $logisticsSettingsFilled = collect($logisticsSettings);
         $paymentSettingsFilled = collect($paymentSettings);
 
-        $hasNonEmptyItem = collect([$storeSettingsFilled, $logisticsSettingsFilled, $paymentSettingsFilled])
-        ->map(function ($collection) {
+        $allFilled = collect([$storeSettingsFilled, $logisticsSettingsFilled, $paymentSettingsFilled]);
+
+        $hasAllNonEmptyCollections = $allFilled->every(function ($collection) {
             return $collection->filter(function ($value) {
                 return !empty($value);
             })->isNotEmpty();
-        })
-        ->every();
+        });
 
-        // if ($hasNonEmptyItem) {
-        //     echo "At least one non-empty item exists in each array.";
-        // } else {
-        //     echo "At least one array is empty or contains only empty items.";
-        // }
-
-        return $hasNonEmptyItem;
+        return $hasAllNonEmptyCollections;
     }
 
     public function checkBankAccounts() : bool

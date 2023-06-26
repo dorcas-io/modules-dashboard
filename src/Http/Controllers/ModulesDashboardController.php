@@ -56,7 +56,7 @@ class ModulesDashboardController extends Controller {
             "module" => ["sales"],
             "title" => "Create your first <strong>product</strong>",
             "description" => "so your customers have something to buy",
-            "why" => "You need to have atleast 1 product on your store before launching it.<b/>You will add product name, selling price, quantity available and category. You can optionally add an image",
+            "why" => "You need to have atleast 1 product on your store before launching it. <br/>You will add product name, selling price, quantity available and category. You can optionally add an image",
             "button_title" => "Create Product",
             "button_path" => "/msl/sales-products?getting_started=create_product",
             "verification" => false,
@@ -778,7 +778,7 @@ class ModulesDashboardController extends Controller {
 
         $data = $response->getData();
 
-        if (!isset($data['errors'])) {
+        if (!isset($data['errors']) && strlen($data) <= 6 ) {
 
             return [
                 'partnerID' => strtoupper($data),
