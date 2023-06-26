@@ -13,13 +13,13 @@
 
             <div class="card col-md-12">
                 <div class="card-header">
-                    <h3 class="card-title">What is the Hub?</h3>
+                    <h3 class="card-title">What is the {{config('app.dorcas_partner_product_name')}}?</h3>
                 </div>
                 <div class="card-body">
 
 					<div class="alert alert-avatar alert-primary col-sm-12" id="welcome-area">
 					  <span class="avatar" style="background-image: url({{ cdn('images/avatar/avatar-9.png') }})"></span>
-					  The Hub is an all-in-one productivity software platform that helps you run your entire business better.
+					  The {{config('app.dorcas_partner_product_name')}} is an all-in-one productivity software platform that helps you run your entire business better.
 					  <br/><br/>
 					  <!--
                       It is basically a collection of tools that you can use to digitally manage e-commerce, sales, people, accounting and so much more!
