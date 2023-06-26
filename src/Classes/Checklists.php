@@ -55,11 +55,25 @@ class Checklists {
         $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
         $paymentSettings = ModulesEcommerceStoreController::getPaymentsSettings((array) $company->extra_data);
         
-        $storeSettingsFilled = $storeSettings;
-        $paymentSettingsFilled = $logisticsSettings;
-        $paymentSettingsFilled = $paymentSettings;
-        
-        return !empty($paymentSettings);
+        $storeSettingsFilled = collect($storeSettings);
+        $logisticsSettingsFilled = collect($logisticsSettings);
+        $paymentSettingsFilled = collect($paymentSettings);
+
+        $hasNonEmptyItem = collect([$storeSettingsFilled, $logisticsSettingsFilled, $paymentSettingsFilled])
+        ->map(function ($collection) {
+            return $collection->filter(function ($value) {
+                return !empty($value);
+            })->isNotEmpty();
+        })
+        ->every();
+
+        // if ($hasNonEmptyItem) {
+        //     echo "At least one non-empty item exists in each array.";
+        // } else {
+        //     echo "At least one array is empty or contains only empty items.";
+        // }
+
+        return $hasNonEmptyItem;
     }
 
     public function checkBankAccounts() : bool
