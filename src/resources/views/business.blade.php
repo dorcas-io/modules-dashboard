@@ -156,7 +156,7 @@
                             <br/></br>
                             Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks.
                             <br/><br/>
-                            <div id="taskCompleted">
+                            <div v-if="taskCompleted">
                                 <span class="text-success"><strong>Congratulations! You have completed basic tasks in using the {{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
                                 <br/><br/>
                                 <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-info w-100">

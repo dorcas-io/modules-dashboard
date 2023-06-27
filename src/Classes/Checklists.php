@@ -61,7 +61,7 @@ class Checklists {
                 ->send('GET');
                 
                 if (!$query->isSuccessful() || empty($query->getData())) {
-                    return null;
+                    return false;
                 }
                 
                 $routes = collect($query->getData())->map(function ($product) {
