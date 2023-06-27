@@ -98,7 +98,7 @@ class ModulesDashboardController extends Controller {
             "description" => "Determine how your customers pay for shipping...",
             "why" => "If you selected to handle shipping yourself, the you need to add costs for routes such as <em>Intra-state</em>, <em>Inter-state</em> or <em>Interational</em> destinations. <br/>If you're using a provider, it will be automatically calculated",
             "button_title" => "Setup Shipping Costs",
-            "button_path" => "/mec/ecommerce-store?getting_started=setup_shipping",
+            "button_path" => "/msl/sales-logistics?getting_started=setup_shipping",
             "verification" => false,
             "verification_method" => "checkShippingCosts"
         ],
