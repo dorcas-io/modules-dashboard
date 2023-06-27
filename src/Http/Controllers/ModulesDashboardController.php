@@ -105,7 +105,7 @@ class ModulesDashboardController extends Controller {
             "module" => ["ecommerce"],
             "title" => "Setup your <strong>online store details</strong>",
             "description" => "Add basic data, payment and logistics settings",
-            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers",
+            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers. Also you will decide how you want customers to pay you and finally how shipping and logistics should be handled",
             "button_title" => "Setup Store Details",
             "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
             "verification" => false,
@@ -830,7 +830,7 @@ class ModulesDashboardController extends Controller {
             
                     $user_dashboard_status = Cache::get($cacheKey);
 
-                    $user_dashboard_status["preferences"]["guide_needed"] = $value;
+                    $user_dashboard_status["preferences"][$preference] = $value;
 
                     Cache::forever($cacheKey, $user_dashboard_status);
 

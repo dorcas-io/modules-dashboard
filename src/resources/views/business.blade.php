@@ -154,12 +154,27 @@
                             <br/></br>
                             Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
                             <br/></br>
-                            If you still need any help after that, you can:
-                            <ul>
-                                <li>View <a href="#" v-on:click.prevent="launchHelpCentre">Help Centre</a></li>
-                                <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
-                                <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
-                            </ul>
+                            Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }}.
+                            <br/><br/>
+                            <div id="taskCompleted">
+                                <span class="text-success">Congratulations! You have completed basic tasks in using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
+                                <br/><br/>
+                                <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-danger w-100">
+                                    Close Getting Started Panels
+                                </a>
+                                <br/><br/>
+                                If you still need any help after this, you can always:
+                                <ul>
+                                    <li>
+                                        View <a href="#" v-on:click.prevent="modulesAssistant">Help Centre</a> 
+                                    where you'll be able to <strong>watch videos</strong>, <strong>view documentation manuals</strong> or <strong>send a message</strong> to get help.
+                                    </li>
+                                    <!--
+                                    <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
+                                    <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
+                                    -->
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -340,6 +355,9 @@
                 checklists: {!! json_encode($checklists) !!},
             },
             computed: {
+                taskCompleted: function {
+                    return this.checklists.meta.done == this.checklists.meta.count
+                },
                 greeting: function () {
                     var hourOfDay = parseInt(moment().format('HH'), 10);
                     if (hourOfDay >= 0 && hourOfDay < 12) {
@@ -375,8 +393,15 @@
 
             },
             methods: {
+                modulesAssistant: function () {
+                    $('#modules-assistant-modal').modal('show');
+                },
                 dashboardPanelRemove: function() {
                     this.userDashboardStatus.preferences.guide_needed = false;
+                    this.processDashboard('update-preferences', {
+                        preference: 'guide_needed',
+                        value: false
+                    });
                 },
                 showWhy: function(checklistIndex) {
 
