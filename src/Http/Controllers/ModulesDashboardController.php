@@ -62,16 +62,6 @@ class ModulesDashboardController extends Controller {
             "verification" => false,
             "verification_method" => "checkProducts"
         ],
-        // "create_customer" => [
-        //    "module" => ["customers"],
-        //     "title" => "Add your first <strong>customer</strong>",
-        //     "description" => "someone that has bought something from you before",
-        //     "button_title" => "Create Product",
-        //     "button_path" => "/msl/products?getting_started=create_product",
-        //     "status" => true,
-        //     "verification" => false,
-        //     "verification_method" => "checkProducts"
-        // ],
         "setup_pickup_address" => [
             "module" => ["ecommerce"],
             "title" => "Setup your <strong>pickup address</strong>",
@@ -82,15 +72,6 @@ class ModulesDashboardController extends Controller {
             "verification" => false,
             "verification_method" => "checkPickupAddress"
         ],
-        // "setup_online_payment" => [
-        //     "module" => ["ecommerce"],
-        //     "title" => "Setup your <strong>online payment</strong>",
-        //     "description" => "so customers can pay you by card",
-        //     "button_title" => "Setup Online Payment",
-        //     "button_path" => "/",
-        //     "verification" => false,
-        //     "verification_method" => "checkOnlinePayment"
-        // ],
         "setup_bank_account" => [
             "module" => ["settings"],
             "title" => "Setup your <strong>bank account</strong>",
@@ -110,6 +91,16 @@ class ModulesDashboardController extends Controller {
             "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
             "verification" => false,
             "verification_method" => "checkOnlineStore"
+        ],
+        "setup_shipping" => [
+            "module" => ["ecommerce"],
+            "title" => "Setup your product <strong>shipping costs</strong>",
+            "description" => "Determine how your customers pay for shipping...",
+            "why" => "If you selected to handle shipping yourself, the you need to add costs for routes such as <em>Intra-state</em>, <em>Inter-state</em> or <em>Interational</em> destinations. <br/>If you're using a provider, it will be automatically calculated",
+            "button_title" => "Setup Shipping Costs",
+            "button_path" => "/mec/ecommerce-store?getting_started=setup_shipping",
+            "verification" => false,
+            "verification_method" => "checkShippingCosts"
         ],
     ];
 

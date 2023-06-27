@@ -141,7 +141,7 @@
             <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
         </div>
 
-        <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed">
+        <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed || !taskCompleted">
             
             <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
                 <div class="card">

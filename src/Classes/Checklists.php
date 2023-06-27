@@ -41,10 +41,46 @@ class Checklists {
         return !empty($locations) && !empty($company_data['location']);
     }
 
-    public function checkOnlinePayment() : bool
+    public function checkShippingCosts() : bool
     {
-        $bank_accounts = $this->controller->getBankAccounts($this->sdk);
-        return $bank_accounts->count() > 0;
+        $company = $this->request->user()->company(true, true);
+
+        $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
+
+        $shippingOption = $logisticsSettings['logistics_shipping'];
+
+        $shippingCostsAreOK = false;
+
+        switch ($shippingOption) {
+
+            case "shipping_myself":
+                
+                $query = $this->sdk->createProductResource()
+                ->addQueryArgument('limit', 10000)
+                ->addQueryArgument('product_type', 'shipping')
+                ->send('GET');
+                
+                if (!$query->isSuccessful() || empty($query->getData())) {
+                    return null;
+                }
+                
+                $routes = collect($query->getData())->map(function ($product) {
+                    return (object) $product;
+                });
+                
+                $shippingCostsAreOK = $routes->count() > 0;
+
+                break;
+
+            case "shipping_provider":
+
+                $shippingCostsAreOK = true;
+
+                break;
+
+        }
+
+        return $shippingCostsAreOK;
     }
 
     public function checkOnlineStore() : bool
