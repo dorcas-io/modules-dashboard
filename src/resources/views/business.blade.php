@@ -154,14 +154,22 @@
                             <br/></br>
                             Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
                             <br/></br>
-                            Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }}.
+                            Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks.
                             <br/><br/>
                             <div id="taskCompleted">
-                                <span class="text-success">Congratulations! You have completed basic tasks in using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
-                                <br/><br/>
-                                <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-danger w-100">
-                                    Close Getting Started Panels
-                                </a>
+
+                                <div class="alert-info alert mb-0">
+                                    <div class="d-flex align-items-center alert-info">
+                                        <div class="flex-fill ms-3 text-truncate">
+                                            <span class="text-muted">Congratulations! You have completed basic tasks in using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
+                                            <br/><br/>
+                                            <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-success w-100">
+                                                Close Getting Started Panels
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <br/><br/>
                                 If you still need any help after this, you can always:
                                 <ul>
