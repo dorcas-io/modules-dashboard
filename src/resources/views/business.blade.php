@@ -328,8 +328,8 @@
                     </div>
                 </div>
             </div>
-            @include('modules-dashboard::modals.message')
         </div>
+        @include('modules-dashboard::modals.message')
     </div>
 
 @endsection
