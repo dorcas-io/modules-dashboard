@@ -821,7 +821,7 @@ class ModulesDashboardController extends Controller {
                 $preference = $payload["preference"] ?? '';
                 $value = $payload["value"] ?? '';
 
-                if ( !empty($preference) && !empty($value) ) {
+                if ( !empty($preference) && isset($value) ) {
 
                     $dorcasUser = $request->user();
                     //$company = $dorcasUser->company(true, true);
@@ -834,6 +834,10 @@ class ModulesDashboardController extends Controller {
 
                     Cache::forever($cacheKey, $user_dashboard_status);
 
+                    $response["status"] = true;
+
+                    $response["message"] = "Preference ($preference) successfully updated to $value";
+
                 } else {
 
                     $response["message"] = "Invalid Preference";
@@ -842,6 +846,7 @@ class ModulesDashboardController extends Controller {
 
                 break;
         }
+        return $response;
     }
 
 

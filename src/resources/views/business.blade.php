@@ -355,7 +355,7 @@
                 checklists: {!! json_encode($checklists) !!},
             },
             computed: {
-                taskCompleted: function {
+                taskCompleted: function () {
                     return this.checklists.meta.done == this.checklists.meta.count
                 },
                 greeting: function () {
