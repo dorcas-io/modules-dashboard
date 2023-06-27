@@ -157,19 +157,11 @@
                             Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks.
                             <br/><br/>
                             <div id="taskCompleted">
-
-                                <div class="alert-info alert mb-0">
-                                    <div class="d-flex align-items-center alert-info">
-                                        <div class="flex-fill ms-3 text-truncate">
-                                            <span class="text-muted">Congratulations! You have completed basic tasks in using the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
-                                            <br/><br/>
-                                            <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-success w-100">
-                                                Close Getting Started Panels
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <span class="text-success"><strong>Congratulations! You have completed basic tasks in using the {{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
+                                <br/><br/>
+                                <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-info w-100">
+                                    Close Getting Started Panels
+                                </a>
                                 <br/><br/>
                                 If you still need any help after this, you can always:
                                 <ul>
