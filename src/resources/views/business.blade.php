@@ -274,7 +274,7 @@
             </div>
         </div>
 
-        <div class="row row-cards row-deck" id="dashboard-data">
+        <div class="row row-cards row-deck" id="dashboard-data" v-if="taskCompleted">
             <div class="col-sm-12 col-md-6">
                 <div class="card">
                     <div class="card-header">

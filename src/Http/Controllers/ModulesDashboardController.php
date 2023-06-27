@@ -1080,4 +1080,27 @@ class ModulesDashboardController extends Controller {
         return view('modules-dashboard::faqs', $this->data);
     }
 
+
+   /**
+     * @param Request $request
+     * @param Sdk     $sdk
+     *
+     */
+    public static function processGettingStartedRedirection(Request $request, $client, $response)
+    {
+        $user = $request->user();
+        $company = $user->company(true, true);
+        $GettingStartedCacheKey = 'GettingStartedCache.' . $company->id . '.' . $user->id;
+        $applicableClient = $client;
+        if ( Cache::has($GettingStartedCacheKey) ) {
+            $cache = Cache::get($GettingStartedCacheKey);
+            if ($cache['currentClient'] == $applicableClient) {
+                $cache['currentClient'] = '';
+                Cache::forever($GettingStartedCacheKey, $cache); // reset currentClient
+                return redirect(route('dashboard'))->with('UiResponse', $response);
+            }
+        }
+    }
+
+
 }
