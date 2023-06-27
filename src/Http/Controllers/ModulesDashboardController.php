@@ -1086,20 +1086,20 @@ class ModulesDashboardController extends Controller {
      * @param Sdk     $sdk
      *
      */
-    public static function processGettingStartedRedirection(Request $request, $client, $response)
+    public static function processGettingStartedRedirection(Request $request, $client)
     {
         $user = $request->user();
         $company = $user->company(true, true);
         $GettingStartedCacheKey = 'GettingStartedCache.' . $company->id . '.' . $user->id;
-        $applicableClient = $client;
         if ( Cache::has($GettingStartedCacheKey) ) {
             $cache = Cache::get($GettingStartedCacheKey);
-            if ($cache['currentClient'] == $applicableClient) {
+            if ($cache['currentClient'] == $client) {
                 $cache['currentClient'] = '';
                 Cache::forever($GettingStartedCacheKey, $cache); // reset currentClient
-                return redirect(route('dashboard'))->with('UiResponse', $response);
+                return true;
             }
         }
+        return false;
     }
 
 
