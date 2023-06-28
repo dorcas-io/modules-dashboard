@@ -381,7 +381,7 @@ class ModulesDashboardController extends Controller {
         // PROCESS CHECKLISTS
         $checklists = [];
 
-        $checklists = $this->processChecklists($request, $sdk, $user_dashboard_status);
+        $checklists = self::processChecklists($request, $sdk, $user_dashboard_status);
 
         $count = collect($checklists)->count();
         $done = collect($checklists)->where('verification', true)->count();
@@ -729,7 +729,7 @@ class ModulesDashboardController extends Controller {
      *
      * @return array
      */
-    protected function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus): array
+    public static function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus, $company=null): array
     {
         $checklists = self::GETTING_STARTED_CHECKLISTS;
 
@@ -741,7 +741,7 @@ class ModulesDashboardController extends Controller {
 
             if (isset($checklists[$cKey]["verification_method"]) && !empty($checklists[$cKey]["verification_method"])) {
                 $method = $checklists[$cKey]["verification_method"];
-                $c = new Checklists($request, $sdk);
+                $c = new Checklists($request, $sdk, $company);
                 $verify = $c->$method();
                 $checklists[$cKey]["verification"] = $verify;
             }

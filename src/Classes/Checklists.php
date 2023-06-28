@@ -20,19 +20,22 @@ class Checklists {
     private $sdk;
 
     private $controller;
+
+    private $company;
     
     const GETTING_STARTED_CHECKLISTS = [];
 
-    public function __construct(Request $request, Sdk $sdk)
+    public function __construct(Request $request, Sdk $sdk, $company)
     {
         $this->request = $request;
         $this->sdk = $sdk;
+        $this->company = $company;
         $this->controller = new Controller();
     }
 
     public function checkPickupAddress() : bool
     {
-        $company = $this->request->user()->company(true, true);
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
 
         $locations = $this->controller->getLocations($this->sdk);
 
@@ -43,7 +46,7 @@ class Checklists {
 
     public function checkShippingCosts() : bool
     {
-        $company = $this->request->user()->company(true, true);
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
 
         $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
 
@@ -85,7 +88,7 @@ class Checklists {
 
     public function checkOnlineStore() : bool
     {
-        $company = $this->request->user()->company(true, true);
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
         
         $storeSettings = ModulesEcommerceStoreController::getStoreSettings((array) $company->extra_data);
         $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
