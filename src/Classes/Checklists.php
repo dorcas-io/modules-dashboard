@@ -20,19 +20,22 @@ class Checklists {
     private $sdk;
 
     private $controller;
+
+    private $company;
     
     const GETTING_STARTED_CHECKLISTS = [];
 
-    public function __construct(Request $request, Sdk $sdk)
+    public function __construct(Request $request, Sdk $sdk, $company)
     {
         $this->request = $request;
         $this->sdk = $sdk;
+        $this->company = $company;
         $this->controller = new Controller();
     }
 
     public function checkPickupAddress() : bool
     {
-        $company = $this->request->user()->company(true, true);
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
 
         $locations = $this->controller->getLocations($this->sdk);
 
@@ -41,32 +44,76 @@ class Checklists {
         return !empty($locations) && !empty($company_data['location']);
     }
 
-    public function checkOnlinePayment() : bool
+    public function checkShippingCosts() : bool
     {
-        $bank_accounts = $this->controller->getBankAccounts($this->sdk);
-        return $bank_accounts->count() > 0;
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
+
+        $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
+
+        $shippingOption = $logisticsSettings['logistics_shipping'];
+
+        $shippingCostsAreOK = false;
+
+        switch ($shippingOption) {
+
+            case "shipping_myself":
+                
+                $query = $this->sdk->createProductResource()
+                ->addQueryArgument('limit', 10000)
+                ->addQueryArgument('product_type', 'shipping')
+                ->send('GET');
+                
+                if (!$query->isSuccessful() || empty($query->getData())) {
+                    return false;
+                }
+                
+                $routes = collect($query->getData())->map(function ($product) {
+                    return (object) $product;
+                });
+                
+                $shippingCostsAreOK = $routes->count() > 0;
+
+                break;
+
+            case "shipping_provider":
+
+                $shippingCostsAreOK = true;
+
+                break;
+
+        }
+
+        return $shippingCostsAreOK;
     }
 
     public function checkOnlineStore() : bool
     {
-        $company = $this->request->user()->company(true, true);
+        $company = !empty($this->company) ? $this->company : $this->request->user()->company(true, true);
         
         $storeSettings = ModulesEcommerceStoreController::getStoreSettings((array) $company->extra_data);
         $logisticsSettings = ModulesEcommerceStoreController::getLogisticsSettings((array) $company->extra_data);
         $paymentSettings = ModulesEcommerceStoreController::getPaymentsSettings((array) $company->extra_data);
         
-        $storeSettingsFilled = $storeSettings;
-        $paymentSettingsFilled = $logisticsSettings;
-        $paymentSettingsFilled = $paymentSettings;
-        
-        return !empty($paymentSettings);
+        $storeSettingsFilled = collect($storeSettings);
+        $logisticsSettingsFilled = collect($logisticsSettings);
+        $paymentSettingsFilled = collect($paymentSettings);
+
+        $allFilled = collect([$storeSettingsFilled, $logisticsSettingsFilled, $paymentSettingsFilled]);
+
+        $hasAllNonEmptyCollections = $allFilled->every(function ($collection) {
+            return $collection->filter(function ($value) {
+                return !empty($value);
+            })->isNotEmpty();
+        });
+
+        return $hasAllNonEmptyCollections;
     }
 
     public function checkBankAccounts() : bool
     {
         $check = $this->controller->getBankAccounts($this->sdk);
         $bank_accounts = !empty($check) ? $check : [];
-        return $bank_accounts->count() > 0;
+        return count($bank_accounts) > 0;
     }
 
     public function checkProducts() : bool

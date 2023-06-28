@@ -141,7 +141,7 @@
             <p class="flow-text">Good @{{ greeting }}, <strong>{{ \Illuminate\Support\Facades\Auth::user()->firstname }}</strong>. Today is {{ \Carbon\Carbon::now()->format('l jS F, Y') }}</p>
         </div>
 
-        <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed">
+        <div class="row row-cards row-deck" id="dashboard-new-user" v-if="userDashboardStatus.preferences.guide_needed || !taskCompleted">
             
             <div class="col-sm-12 col-md-6 col-lg-4" id="new-user-welcome">
                 <div class="card">
@@ -154,12 +154,27 @@
                             <br/></br>
                             Follow the <strong>Getting Started Checklist</strong> to get setup in no time.
                             <br/></br>
-                            If you still need any help after that, you can:
-                            <ul>
-                                <li>View <a href="#" v-on:click.prevent="launchHelpCentre">Help Centre</a></li>
-                                <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
-                                <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
-                            </ul>
+                            Currently, you have completed {{ $checklists['meta']['done'] . " (out of " . $checklists['meta']['count'] . ")" }} tasks.
+                            <br/><br/>
+                            <div v-if="taskCompleted">
+                                <span class="text-success"><strong>Congratulations! You have completed basic tasks in using the {{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong></span>
+                                <br/><br/>
+                                <a href="#" v-on:click.prevent="dashboardPanelRemove" class="btn btn-outline-info w-100">
+                                    Close Getting Started Panels
+                                </a>
+                                <br/><br/>
+                                If you still need any help after this, you can always:
+                                <ul>
+                                    <li>
+                                        View <a href="#" v-on:click.prevent="modulesAssistant">Help Centre</a> 
+                                    where you'll be able to <strong>watch videos</strong>, <strong>view documentation manuals</strong> or <strong>send a message</strong> to get help.
+                                    </li>
+                                    <!--
+                                    <li>Read <a :href="dashboardLink.documentation" target="_blank">Documentation</a></li>
+                                    <li>Watch <a :href="dashboardLink.videos" target="_blank">Our Help Videos</a></li>
+                                    -->
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,7 +274,7 @@
             </div>
         </div>
 
-        <div class="row row-cards row-deck" id="dashboard-data">
+        <div class="row row-cards row-deck" id="dashboard-data" v-if="taskCompleted">
             <div class="col-sm-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
@@ -313,8 +328,8 @@
                     </div>
                 </div>
             </div>
-            @include('modules-dashboard::modals.message')
         </div>
+        @include('modules-dashboard::modals.message')
     </div>
 
 @endsection
@@ -340,6 +355,9 @@
                 checklists: {!! json_encode($checklists) !!},
             },
             computed: {
+                taskCompleted: function () {
+                    return this.checklists.meta.done == this.checklists.meta.count
+                },
                 greeting: function () {
                     var hourOfDay = parseInt(moment().format('HH'), 10);
                     if (hourOfDay >= 0 && hourOfDay < 12) {
@@ -372,27 +390,30 @@
                     this.searchAppStore(1, 12, 'installed_only');
                 }*/
                 this.searchAppStore(1, 12, 'installed_only');
-                //console.log(this.account_expired())
-                //console.log(this.applications)
-                
-                //console.log(this.salesGraph);
 
             },
             methods: {
+                modulesAssistant: function () {
+                    $('#modules-assistant-modal').modal('show');
+                },
                 dashboardPanelRemove: function() {
                     this.userDashboardStatus.preferences.guide_needed = false;
+                    this.processDashboard('update-preferences', {
+                        preference: 'guide_needed',
+                        value: false
+                    });
                 },
                 showWhy: function(checklistIndex) {
 
-                    let currentChecklist = this.checklists.checklists.find( checklist, index => index==checklistIndex);
+                    let currentChecklist = Object.entries(this.checklists.checklists).find( ([index]) => index == checklistIndex);
 
                     //reset Message
                     this.dashboard_message = { 'title': 'Message', 'body': '', 'action': '', 'action_url': '#' };
 
-                    this.dashboard_message.title = "Why " + currentChecklist.title
-                    this.dashboard_message.body = "<p>" + currentChecklist.why + "</p>"
-                    this.dashboard_message.action = currentChecklist.button_title
-                    this.dashboard_message.action_url = currentChecklist.button_path
+                    this.dashboard_message.title = "Why " + currentChecklist[1].title
+                    this.dashboard_message.body = "<p>" + currentChecklist[1].why + "</p>"
+                    this.dashboard_message.action = currentChecklist[1].button_title
+                    this.dashboard_message.action_url = currentChecklist[1].button_path
                     $('#dashboard-message-modal').modal('show'); 
                 },
                 processDashboard: function(processType, processPayload) {

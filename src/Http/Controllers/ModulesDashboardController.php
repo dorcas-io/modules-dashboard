@@ -56,22 +56,12 @@ class ModulesDashboardController extends Controller {
             "module" => ["sales"],
             "title" => "Create your first <strong>product</strong>",
             "description" => "so your customers have something to buy",
-            "why" => "You need to have atleast 1 product on your store before launching it.<b/>You will add product name, selling price, quantity available and category. You can optionally add an image",
+            "why" => "You need to have atleast 1 product on your store before launching it. <br/>You will add product name, selling price, quantity available and category. You can optionally add an image",
             "button_title" => "Create Product",
             "button_path" => "/msl/sales-products?getting_started=create_product",
             "verification" => false,
             "verification_method" => "checkProducts"
         ],
-        // "create_customer" => [
-        //    "module" => ["customers"],
-        //     "title" => "Add your first <strong>customer</strong>",
-        //     "description" => "someone that has bought something from you before",
-        //     "button_title" => "Create Product",
-        //     "button_path" => "/msl/products?getting_started=create_product",
-        //     "status" => true,
-        //     "verification" => false,
-        //     "verification_method" => "checkProducts"
-        // ],
         "setup_pickup_address" => [
             "module" => ["ecommerce"],
             "title" => "Setup your <strong>pickup address</strong>",
@@ -82,15 +72,6 @@ class ModulesDashboardController extends Controller {
             "verification" => false,
             "verification_method" => "checkPickupAddress"
         ],
-        // "setup_online_payment" => [
-        //     "module" => ["ecommerce"],
-        //     "title" => "Setup your <strong>online payment</strong>",
-        //     "description" => "so customers can pay you by card",
-        //     "button_title" => "Setup Online Payment",
-        //     "button_path" => "/",
-        //     "verification" => false,
-        //     "verification_method" => "checkOnlinePayment"
-        // ],
         "setup_bank_account" => [
             "module" => ["settings"],
             "title" => "Setup your <strong>bank account</strong>",
@@ -105,11 +86,21 @@ class ModulesDashboardController extends Controller {
             "module" => ["ecommerce"],
             "title" => "Setup your <strong>online store details</strong>",
             "description" => "Add basic data, payment and logistics settings",
-            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers",
+            "why" => "These details such as payment preference and social media contact will be automatically displayed on your store for customers. Also you will decide how you want customers to pay you and finally how shipping and logistics should be handled",
             "button_title" => "Setup Store Details",
             "button_path" => "/mec/ecommerce-store?getting_started=setup_store",
             "verification" => false,
             "verification_method" => "checkOnlineStore"
+        ],
+        "setup_shipping" => [
+            "module" => ["ecommerce"],
+            "title" => "Setup your product <strong>shipping costs</strong>",
+            "description" => "Determine how your customers pay for shipping...",
+            "why" => "If you selected to handle shipping yourself, the you need to add costs for routes such as <em>Intra-state</em>, <em>Inter-state</em> or <em>Interational</em> destinations. <br/>If you're using a provider, it will be automatically calculated",
+            "button_title" => "Setup Shipping Costs",
+            "button_path" => "/msl/sales-logistics?getting_started=setup_shipping",
+            "verification" => false,
+            "verification_method" => "checkShippingCosts"
         ],
     ];
 
@@ -390,7 +381,7 @@ class ModulesDashboardController extends Controller {
         // PROCESS CHECKLISTS
         $checklists = [];
 
-        $checklists = $this->processChecklists($request, $sdk, $user_dashboard_status);
+        $checklists = self::processChecklists($request, $sdk, $user_dashboard_status);
 
         $count = collect($checklists)->count();
         $done = collect($checklists)->where('verification', true)->count();
@@ -738,7 +729,7 @@ class ModulesDashboardController extends Controller {
      *
      * @return array
      */
-    protected function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus): array
+    public static function processChecklists(Request $request, Sdk $sdk, array $userDashboardStatus, $company=null): array
     {
         $checklists = self::GETTING_STARTED_CHECKLISTS;
 
@@ -750,7 +741,7 @@ class ModulesDashboardController extends Controller {
 
             if (isset($checklists[$cKey]["verification_method"]) && !empty($checklists[$cKey]["verification_method"])) {
                 $method = $checklists[$cKey]["verification_method"];
-                $c = new Checklists($request, $sdk);
+                $c = new Checklists($request, $sdk, $company);
                 $verify = $c->$method();
                 $checklists[$cKey]["verification"] = $verify;
             }
@@ -778,7 +769,7 @@ class ModulesDashboardController extends Controller {
 
         $data = $response->getData();
 
-        if (!isset($data['errors'])) {
+        if (!isset($data['errors']) && strlen($data) <= 6 ) {
 
             return [
                 'partnerID' => strtoupper($data),
@@ -821,7 +812,7 @@ class ModulesDashboardController extends Controller {
                 $preference = $payload["preference"] ?? '';
                 $value = $payload["value"] ?? '';
 
-                if ( !empty($preference) && !empty($value) ) {
+                if ( !empty($preference) && isset($value) ) {
 
                     $dorcasUser = $request->user();
                     //$company = $dorcasUser->company(true, true);
@@ -830,9 +821,13 @@ class ModulesDashboardController extends Controller {
             
                     $user_dashboard_status = Cache::get($cacheKey);
 
-                    $user_dashboard_status["preferences"]["guide_needed"] = $value;
+                    $user_dashboard_status["preferences"][$preference] = $value;
 
                     Cache::forever($cacheKey, $user_dashboard_status);
+
+                    $response["status"] = true;
+
+                    $response["message"] = "Preference ($preference) successfully updated to $value";
 
                 } else {
 
@@ -842,6 +837,7 @@ class ModulesDashboardController extends Controller {
 
                 break;
         }
+        return $response;
     }
 
 
@@ -1087,5 +1083,28 @@ class ModulesDashboardController extends Controller {
         ];
         return view('modules-dashboard::faqs', $this->data);
     }
+
+
+   /**
+     * @param Request $request
+     * @param Sdk     $sdk
+     *
+     */
+    public static function processGettingStartedRedirection(Request $request, $client)
+    {
+        $user = $request->user();
+        $company = $user->company(true, true);
+        $GettingStartedCacheKey = 'GettingStartedCache.' . $company->id . '.' . $user->id;
+        if ( Cache::has($GettingStartedCacheKey) ) {
+            $cache = Cache::get($GettingStartedCacheKey);
+            if ($cache['currentClient'] == $client) {
+                $cache['currentClient'] = '';
+                Cache::forever($GettingStartedCacheKey, $cache); // reset currentClient
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
