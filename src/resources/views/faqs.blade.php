@@ -87,7 +87,7 @@
     <div class="accordion">
         <h1>
             <p>Reach Us through email ?</p>
-            <a href="mailto:zaccheausolawuyi@gmail.com" class="btn btn-success">Send Email</a>
+            <a href="mailto:support@dorcas.io" class="btn btn-success">Send Email</a>
         </h1>
         <hr>
         <div class="container">
