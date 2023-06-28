@@ -113,7 +113,7 @@ class Checklists {
     {
         $check = $this->controller->getBankAccounts($this->sdk);
         $bank_accounts = !empty($check) ? $check : [];
-        return $bank_accounts->count() > 0;
+        return count($bank_accounts) > 0;
     }
 
     public function checkProducts() : bool
