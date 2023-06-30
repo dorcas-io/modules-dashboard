@@ -762,12 +762,14 @@ class ModulesDashboardController extends Controller {
 
         $user = $request->user();
 
-
         $company = $user->company(true, true);
 
         $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
 
         $data = $response->getData();
+
+        dd($data);
+
 
         if (!isset($data['errors']) && strlen($data) <= 6 ) {
 
