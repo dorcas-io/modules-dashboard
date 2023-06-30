@@ -768,9 +768,6 @@ class ModulesDashboardController extends Controller {
 
         $data = $response->getData();
 
-        dd($data);
-
-
         if (!isset($data['errors']) && strlen($data) <= 6 ) {
 
             return [
