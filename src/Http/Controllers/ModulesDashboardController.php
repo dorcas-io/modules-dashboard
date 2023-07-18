@@ -769,7 +769,6 @@ class ModulesDashboardController extends Controller {
 
         $user = $request->user();
 
-
         $company = $user->company(true, true);
 
         $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
@@ -979,9 +978,13 @@ class ModulesDashboardController extends Controller {
             # add the UI components
         }
         $this->data['countries'] = $countries = $this->getCountries($sdk);
+
+
         # get the countries listing
         $nigeria = !empty($countries) && $countries->count() > 0 ? $countries->where('iso_code', 'NG')->first() : null;
         # get the nigeria country model
+
+
         if (!empty($nigeria)) {
             $this->data['states'] = $this->getDorcasStates($sdk, $nigeria->id);
             # get the states
