@@ -121,7 +121,7 @@ class ModulesDashboardController extends Controller {
         $this->setupUIComponents = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($readOnlyModules) {
             $field['is_readonly'] = $readOnlyModules; //update readonly from env
             return $field;
-        });
+        })->toArray();
 
     }
 
@@ -157,7 +157,7 @@ class ModulesDashboardController extends Controller {
             $currentUiSetup = $configurations['ui_setup'] ?? [];
 
 
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
@@ -438,12 +438,12 @@ class ModulesDashboardController extends Controller {
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
@@ -964,7 +964,7 @@ class ModulesDashboardController extends Controller {
             # check if the UI has been configured
             $currentUiSetup = $configurations['ui_setup'] ?? [];
 
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
@@ -1033,7 +1033,7 @@ class ModulesDashboardController extends Controller {
             }
             # check if the UI has been configured
             $currentUiSetup = $configurations['ui_setup'] ?? [];
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
