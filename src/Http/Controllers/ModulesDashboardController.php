@@ -32,6 +32,8 @@ class ModulesDashboardController extends Controller {
         'services' => ['icon' => 'domain', 'bg' => 'bg-green'],
         'teams' => ['icon' => 'group', 'bg' => 'bg-green']
     ];
+
+    private $setupUIComponents;
     
     /** @var array  */
 
@@ -113,6 +115,14 @@ class ModulesDashboardController extends Controller {
             'header' => ['title' => config('modules-dashboard.title')],
             'selectedMenu' => 'modules-dashboard'
         ];
+
+        $readOnlyModules = env('SETTINGS_MODULES_READONLY', true);
+
+        $this->setupUIComponents = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($readOnlyModules) {
+            $field['is_readonly'] = $readOnlyModules; //update readonly from env
+            return $field;
+        });
+
     }
 
     public function business(Request $request, Sdk $sdk)
@@ -329,15 +339,6 @@ class ModulesDashboardController extends Controller {
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
 
-
-//           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
-//
-//
-//           $this->data['partner_id'] = $response->getData();
-
-
-//            # get the company status
-
             //$summary_aspects = ['employees', 'customers', 'orders'];
             $summary_aspects = ['customers', 'orders'];
 
@@ -515,11 +516,11 @@ class ModulesDashboardController extends Controller {
         $business_state = "";
         $currency = env('SETTINGS_CURRENCY', 'NGN');
 
-        $selected_apps = [
-            "customers",
-            "ecommerce",
-            "sales"
-        ];
+        // $selected_apps = [
+        //     "customers",
+        //     "ecommerce",
+        //     "sales"
+        // ];
 
         /**
         * a lot can be controlled at self::SETUP_UI_COMPONENTS
@@ -527,20 +528,26 @@ class ModulesDashboardController extends Controller {
         * enbled means not showig
         */
 
-        $selected_apps = ["customers", "ecommerce", "sales"];
+        // Incorporate env module settings if any
+        $env_modules = explode(",", env('SETTINGS_MODULES_LIST', ""));
+
+        $selected_apps = is_array($env_modules) && count($env_modules) > 0 ? $env_modules : ["customers", "ecommerce", "sales"];
         # choose which modules to activate
+
+        // Update SETUP_UI_COMPONENTS
+        $SETUP_UI_COMPONENTS = $this->setupUIComponents; // self::SETUP_UI_COMPONENTS;
 
 
         $configurations = (array) $company->extra_data;
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect()->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($SETUP_UI_COMPONENTS)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
@@ -620,18 +627,18 @@ class ModulesDashboardController extends Controller {
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $baseFeatures = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $baseFeatures = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['base']);
         })->pluck('id');
         # get the base values
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
