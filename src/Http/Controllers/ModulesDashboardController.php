@@ -756,6 +756,28 @@ class ModulesDashboardController extends Controller {
         return $checklists;
     }
 
+    /**
+     * @param Request $request
+     * @param Sdk $sdk
+     *
+     * @return array
+     */
+    public static function readinessChecks(Request $request, Sdk $sdk, $company=null): array
+    {
+        $checks = [];
+        //(new Checklists())->checkBankAccounts()
+        $c = new Checklists($request, $sdk, $company);
+        $checks = [
+            "products" => $c->checkProducts(),
+            "store" => $c->checkPickupAddress(),
+            "address" => $c->checkProducts(),
+            "bank" => $c->checkBankAccounts(),
+            "shipping" => $c->checkShippingCosts(),
+        ];
+        
+        return $checks;
+    }
+
 
     
     /**
