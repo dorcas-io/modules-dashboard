@@ -195,20 +195,25 @@ class ModulesDashboardController extends Controller {
         # first time users
 
 
-        $viewAsSME = !empty($request->query('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
-
         $dorcasEdition = env("DORCAS_EDITION", "business");
 
-        if ( !$viewAsSME && $dorcasEdition != "business" ) {
+        // If this is multi-tenant, lets see if we should use an admin switchboard
+        if ( $dorcasEdition != "business" ) {
 
-            return view('modules-dashboard::admin', $this->data);
+            $viewAsSME = !empty($request->query('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
+            # check if a SME switch was requested via query
 
-        } else {
+            if ($viewAsSME) {
 
-            if (empty($request->session()->get('viewAsSME', null))) {
-                $request->session()->put('viewAsSME', true);
+                if (empty($request->session()->get('viewAsSME', null))) {
+                    $request->session()->put('viewAsSME', true);
+                }
+                # save viewAsSME preference
+            } else {
+
+                return view('modules-dashboard::admin', $this->data);
+
             }
-            # save viewAsSME preference
 
         }
 
