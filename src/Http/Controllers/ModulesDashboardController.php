@@ -200,7 +200,7 @@ class ModulesDashboardController extends Controller {
         // If this is multi-tenant, lets see if we should use an admin switchboard
         if ( $dorcasEdition != "business" ) {
 
-            $viewAsSME = !empty($request->query('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
+            $viewAsSME = !empty($request->has('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
             # check if a SME switch was requested via query
 
             if ($viewAsSME) {
@@ -212,7 +212,7 @@ class ModulesDashboardController extends Controller {
             } else {
 
                 $this->data['page'] = ['title' => 'Administrator Dashboard'];
-                $this->data['header'] = ['title' => 'Administrator Dashboard'];
+                $this->data['header'] = ['title' => 'Administrator Dashboar'];
 
                 return view('modules-dashboard::admin', $this->data);
 

@@ -138,7 +138,7 @@
                                 You can view/manage all SMEs registered on the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
 
                                 <div class="col-md-12">
-                                    <a href="{{ $admin_url }}" class="btn btn-danger">Explore As Administrator</a>
+                                    <a href="{{ $admin_url }}" target="_blank" class="btn btn-danger">Explore As Admin</a>
                                 </div>
 
                             </p>
