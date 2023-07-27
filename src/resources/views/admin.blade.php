@@ -90,7 +90,7 @@
 
             <div class="col-md-12 col-lg-6">
 
-                <form action="{{ route('dashboard') . '?viewAsSME' }}" method="get"> <!-- class="col s12" -->
+                <form action="#" method="get"> <!-- class="col s12" -->
                     {{ csrf_field() }}
 
                     <div class="card">
@@ -103,7 +103,7 @@
                                 You can explore the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }} as an SME</strong>
 
                                 <div class="col-md-12">
-                                    <button class="btn btn-primary" name="action">Explore As SME</button>
+                                    <a href="{{ route('dashboard') . '?viewAsSME' }}" class="btn btn-primary">Explore As SME</a>
                                 </div>
 
                             </p>
@@ -126,7 +126,7 @@
                     }
                 @endphp
 
-                <form action="{{ $admin_url }}" method="get"> <!-- class="col s12" -->
+                <form action="#" method="get"> <!-- class="col s12" -->
                     {{ csrf_field() }}
 
                     <div class="card">
@@ -138,7 +138,7 @@
                                 You can view/manage all SMEs registered on the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
 
                                 <div class="col-md-12">
-                                    <button class="btn btn-danger" name="action">Explore as Administrator</button>
+                                    <a href="{{ $admin_url }}" class="btn btn-danger">Explore As Administrator</a>
                                 </div>
 
                             </p>
