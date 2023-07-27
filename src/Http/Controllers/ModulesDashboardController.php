@@ -194,6 +194,27 @@ class ModulesDashboardController extends Controller {
         }
         # first time users
 
+
+        $viewAsSME = !empty($request->query('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
+
+        $dorcasEdition = env("DORCAS_EDITION", "business");
+
+        if ( !$viewAsSME && $dorcasEdition != "business" ) {
+
+            return view('modules-dashboard::admin', $this->data);
+
+        } else {
+
+            if (empty($request->session()->get('viewAsSME', null))) {
+                $request->session()->put('viewAsSME', true);
+            }
+            # save viewAsSME preference
+
+        }
+
+
+        // PROCESS SME VIEWS AS BUSINESS OR PROFESSIONAL
+
         $daysAgo = Carbon::now()->subDays(config('hub.dashboard.graph.days_ago'));
 
         if (!empty($viewMode) && ($viewMode === 'professional' || $viewMode === 'vendor')) {
