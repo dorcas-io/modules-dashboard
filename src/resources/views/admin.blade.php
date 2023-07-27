@@ -88,7 +88,7 @@
 
         <div class="row col-md-12">
 
-            <div class="col-md-6 col-lg-9">
+            <div class="col-md-6 col-lg-7">
 
                 <form action="#" method="get"> <!-- class="col s12" -->
                     {{ csrf_field() }}
@@ -116,7 +116,7 @@
             </div>
 
 
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-5">
 
                 @php
                     if (!empty($vPanelUrl)) {
