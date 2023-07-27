@@ -49,8 +49,8 @@ class ModulesDashboardController extends Controller {
         //['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
-        ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => true, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
-        ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
+        ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => false, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
+        ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => false, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
@@ -182,7 +182,9 @@ class ModulesDashboardController extends Controller {
             }
         }
 
-        if (!$this->data['isConfigured']) {
+        $isConfigured = $this->data['isConfigured'];
+
+        if (!$isConfigured) {
             $autosetup = env('SETTINGS_DASHBOARD_AUTOSETUP', 'no');
             if ( $autosetup  == 'yes' ) {
                 $this->auto_setup($request, $sdk);
@@ -534,6 +536,9 @@ class ModulesDashboardController extends Controller {
         $selected_apps = is_array($env_modules) && count($env_modules) > 0 ? $env_modules : ["customers", "ecommerce", "sales"];
         # choose which modules to activate
 
+        // add default modules
+        $selected_apps = array_merge($selected_apps, ['dashboard', 'settings']);
+
         // Update SETUP_UI_COMPONENTS
         $SETUP_UI_COMPONENTS = $this->setupUIComponents; // self::SETUP_UI_COMPONENTS;
 
@@ -774,7 +779,7 @@ class ModulesDashboardController extends Controller {
             "bank" => $c->checkBankAccounts(),
             "shipping" => $c->checkShippingCosts(),
         ];
-        
+
         return $checks;
     }
 
