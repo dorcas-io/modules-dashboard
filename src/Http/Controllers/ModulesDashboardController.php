@@ -197,8 +197,8 @@ class ModulesDashboardController extends Controller {
 
         $dorcasEdition = env("DORCAS_EDITION", "business");
 
-        // If this is multi-tenant, lets see if we should use an admin switchboard
-        if ( $dorcasEdition != "business" ) {
+        // If this is multi-tenant and its an admin login, lets see if we should use an admin switchboard
+        if ( $dorcasEdition != "business" && $dorcasUser->is_partner) {
 
             $viewAsSME = !empty($request->has('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
             # check if a SME switch was requested via query
