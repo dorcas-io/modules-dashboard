@@ -68,18 +68,16 @@
 
 
     <div class="row row-cards row-deck" id="store-statistics">
-	    	<div class="col-md-12 col-lg-6">
+	    	<div class="col-md-12 col-lg-12">
 	    		<div class="card p-3">
 	    			<div class="d-flex align-items-center">
 	    				<span class="stamp stamp-md bg-green mr-3">
                             <i class="fe fe-grid"></i>
                         </span>
 	    				<div>
-	    					<h4 class="m-0"><a href="javascript:void(0)">Administrator Switchboard</a></h4>
+	    					<h4 class="m-0"><a href="javascript:void(0)">You Are Logged In As An Administrator</a></h4>
 	    					<small class="text-muted">
-                                It appears you are logged in as an administrator
-                                <br/><br/>
-                                <strong>Do you want to continue as an Administrator or as an SME?</strong>
+                                <strong>Do you want explore as an SME OR continue as an Administrator?</strong>
                             </small>
 	    				</div>
 	    			</div>
@@ -92,7 +90,7 @@
 
             <div class="col-md-12 col-lg-6">
 
-                <form action="{{ route('dashboard') . '?viewAsSME' }}" method="post"> <!-- class="col s12" -->
+                <form action="{{ route('dashboard') . '?viewAsSME' }}" method="get"> <!-- class="col s12" -->
                     {{ csrf_field() }}
 
                     <div class="card">
@@ -120,40 +118,34 @@
 
             <div class="col-md-12 col-lg-6">
 
-                <div class="row">
+                @php
+                    if (!empty($vPanelUrl)) {
+                        $admin_url = $vPanelUrl;
+                    } else {
+                        $admin_url = "#";
+                    }
+                @endphp
 
-                    @php
+                <form action="{{ $admin_url }}" method="get"> <!-- class="col s12" -->
+                    {{ csrf_field() }}
 
-                        if (!empty($vPanelUrl)) {
-                            $admin_url = $vPanelUrl;
-                        } else {
-                            $admin_url = "#";
-                        }
+                    <div class="card">
+                        <div class="ribbon bg-red">ADMIN</div>
+                        <div class="card-body">
+                            <h3 class="card-title">Explore as Administrator</h3>
+                            <p class="text-muted">
 
-                    @endphp
+                                You can view/manage all SMEs registered on the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
 
-                    <form action="{{ $admin_url }}" method="post"> <!-- class="col s12" -->
-                        {{ csrf_field() }}
+                                <div class="col-md-12">
+                                    <button class="btn btn-danger" name="action">Explore as Administrator</button>
+                                </div>
 
-                        <div class="card">
-                            <div class="ribbon bg-red">ADMIN</div>
-                            <div class="card-body">
-                                <h3 class="card-title">Explore as Administrator</h3>
-                                <p class="text-muted">
-
-                                    You can view/manage all SMEs registered on the <strong>{{ env('DORCAS_PARTNER_PRODUCT_NAME', 'eCommerce Suite') }}</strong>
-
-                                    <div class="col-md-12">
-                                        <button class="btn btn-danger" name="action">Explore as Administrator</button>
-                                    </div>
-
-                                </p>
-                            </div>
+                            </p>
                         </div>
+                    </div>
 
-                    </form>
-
-                </div>
+                </form>
 
             </div>
 

@@ -211,6 +211,9 @@ class ModulesDashboardController extends Controller {
                 # save viewAsSME preference
             } else {
 
+                $this->data['page'] = ['title' => 'Administrator Dashboard'];
+                $this->data['header'] = ['title' => 'Administrator Dashboard'];
+
                 return view('modules-dashboard::admin', $this->data);
 
             }
