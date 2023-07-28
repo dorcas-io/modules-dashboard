@@ -803,8 +803,8 @@ class ModulesDashboardController extends Controller {
         $c = new Checklists($request, $sdk, $company);
         $checks = [
             "products" => $c->checkProducts(),
-            "store" => $c->checkPickupAddress(),
-            "address" => $c->checkProducts(),
+            "store" => $c->checkOnlineStore(),
+            "address" => $c->checkPickupAddress(),
             "bank" => $c->checkBankAccounts(),
             "shipping" => $c->checkShippingCosts(),
         ];
