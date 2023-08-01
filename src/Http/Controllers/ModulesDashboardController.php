@@ -119,7 +119,9 @@ class ModulesDashboardController extends Controller {
         $readOnlyModules = env('SETTINGS_MODULES_READONLY', true);
 
         $this->setupUIComponents = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($readOnlyModules) {
-            $field['is_readonly'] = $readOnlyModules; //update readonly from env
+            if ($field['enabled']) {
+                $field['is_readonly'] = $readOnlyModules; //update readonly from env (onnly if its enabled for use)
+            }
             return $field;
         })->toArray();
 
@@ -212,7 +214,7 @@ class ModulesDashboardController extends Controller {
             } else {
 
                 $this->data['page'] = ['title' => 'Administrator Dashboard'];
-                $this->data['header'] = ['title' => 'Administrator Dashboar'];
+                $this->data['header'] = ['title' => 'Administrator Dashboard'];
 
                 return view('modules-dashboard::admin', $this->data);
 
@@ -1166,6 +1168,73 @@ class ModulesDashboardController extends Controller {
             }
         }
         return false;
+    }
+
+    /**
+     * @param Request $request
+     * @param Sdk     $sdk
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function customization_setup(Request $request, Sdk $sdk)
+    {
+
+        $setup_actions = ['setup_products', 'setup_categories'];
+
+        $this->validate($request, [
+            'action' => 'required|in:' . implode(',', $setup_actions),
+        ]);
+
+        # validate the request
+        try {
+
+            $params = [
+                'arguments' => []
+            ];
+
+            switch($request->action) {
+
+                case 'setup_products':
+
+                    $request->query->set('command', "db:seed");
+
+                    $params['arguments'] = [
+                        '--force' => true,
+                        '--class' => 'AssistantProductSeeder',
+                    ];
+                break;
+
+            }
+            
+            $command = (new Assistant())->commandAssistant($request, $params);
+
+            if ($command["status"]) {
+                $response = (tabler_ui_html_response($command["message"]))->setType(UiResponse::TYPE_SUCCESS);
+            } else {
+                $response = (tabler_ui_html_response([$command["message"]]))->setType(UiResponse::TYPE_ERROR);
+            }
+
+            
+
+        } catch (\Exception $e) {
+
+            // Handle different types of exceptions here, including validation exceptions
+            if ($e instanceof ValidationException) {
+                // Handle validation exceptions
+                // $errors = $e->errors();
+                // return response()->json([
+                //     'error' => 'Validation error occurred.',
+                //     'errors' => $errors,
+                // ], 422);
+                $response = (tabler_ui_html_response(['Invalid customization type. The permitted values are: ' . implode(', ', $setup_actions)]))->setType(UiResponse::TYPE_ERROR);
+            } else {
+                // Handle other types of exceptions
+                $response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            }
+            
+        }
+        return redirect(url()->current())->with('UiResponse', $response);
     }
 
 
