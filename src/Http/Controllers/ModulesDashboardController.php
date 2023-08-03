@@ -1186,6 +1186,8 @@ class ModulesDashboardController extends Controller {
             'action' => 'required|in:' . implode(',', $setup_actions),
         ]);
 
+        $action = $request->query('action');
+
         # validate the request
         try {
 
@@ -1193,7 +1195,7 @@ class ModulesDashboardController extends Controller {
                 'arguments' => []
             ];
 
-            switch($request->action) {
+            switch($action) {
 
                 case 'setup_products':
 

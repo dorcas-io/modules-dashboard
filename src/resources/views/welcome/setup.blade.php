@@ -191,7 +191,7 @@
                                     This will create sample products in your inventory. You are free to modify and/or remove them
                                 </div>
                                 <div class="card-footer">
-                                    <button type="submit" form="form-customization-setup" class="btn btn-primary btn-block" name="action" value="setup_products">Setup</button>
+                                    <button type="submit" form="form-customization-setup" class="btn btn-primary btn-block" name="action" value="setup_products">Setup Products</button>
                                 </div>
                             </div>
                         </div>
