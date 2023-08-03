@@ -162,20 +162,18 @@
 
 				</form>
 
-
                 <div class="row mt-4"> <!--  d-none -->
-                    <hr>
                     <button type="submit" form="form-welcome-setup" class="btn btn-primary btn-block" name="action" :class="{'btn-loading':submittingSetup}" value="save_preferences">Save Preferences</button>
-                    <hr>
                 </div>
+                
+                <hr>
 
-				<form id="form-customization-setup" action="{{ route('customization-setup-post') }}" method="post"> <!-- v-on:submit.prevent="submitWelcomeSetup"-->
+				<form id="form-customization-setup" action="{{ route('customization-setup-post') }}" method="get"> <!-- v-on:submit.prevent="submitWelcomeSetup"-->
                     @csrf
                     <div class="row mt-4"> <!--  d-none -->
                         <div class="col-sm-12 col-md-12">
                             <p class="text-uppercase">
                                 Setup additional customization
-                                <hr>
                             </p>
                         </div>
 
@@ -186,11 +184,14 @@
                                 <div class="card-header">
                                     <h3 class="card-title">Sample Products</h3>
                                         <div class="card-options">
-                                            <button type="submit" form="form-customization-setup" class="btn btn-primary btn-block" name="action" value="setup_products">Setup</button>
+                                            .
                                         </div>
                                 </div>
                                 <div class="card-body">
                                     This will create sample products in your inventory. You are free to modify and/or remove them
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" form="form-customization-setup" class="btn btn-primary btn-block" name="action" value="setup_products">Setup</button>
                                 </div>
                             </div>
                         </div>
