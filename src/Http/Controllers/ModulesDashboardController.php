@@ -1192,7 +1192,8 @@ class ModulesDashboardController extends Controller {
         try {
 
             $params = [
-                'arguments' => []
+                'arguments' => [],
+                'info' => []
             ];
 
             switch($action) {
@@ -1205,6 +1206,9 @@ class ModulesDashboardController extends Controller {
                         '--force' => true,
                         '--class' => 'AssistantProductSeeder',
                     ];
+                    $params['info'] = [
+                        'command_name' => 'Product Setup Command',
+                    ];
                 break;
 
             }
@@ -1212,7 +1216,7 @@ class ModulesDashboardController extends Controller {
             $command = (new Assistant())->commandAssistant($request, $params);
 
             if ($command["status"]) {
-                $response = (tabler_ui_html_response($command["message"]))->setType(UiResponse::TYPE_SUCCESS);
+                $response = (tabler_ui_html_response([$command["message"]]))->setType(UiResponse::TYPE_SUCCESS);
             } else {
                 $response = (tabler_ui_html_response([$command["message"]]))->setType(UiResponse::TYPE_ERROR);
             }
@@ -1236,7 +1240,7 @@ class ModulesDashboardController extends Controller {
             }
             
         }
-        return redirect(url()->current())->with('UiResponse', $response);
+        return redirect(route('welcome-setup'))->with('UiResponse', $response);
     }
 
 
