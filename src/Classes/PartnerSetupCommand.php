@@ -24,20 +24,33 @@ class PartnerSetupCommand extends Command
     {
         
         // access options
-        $walletPreset = $this->option('wallet-preset') ?? false;
+        $walletPreset = $this->option('wallet-preset') ?? true;
         
         $this->info('DORCAS PARTNER SETUP');
 
 
         $this->info('Setting up eCommerce Partner Wallets...');
-        $wallets = (new ModulesDashboardController())->createPartnerECommerceWallets($walletPreset);
-        $setup_wallets = $wallets->getData()->data;
-        $walletRefs = '';
-        foreach ($setup_wallets as $key => $value) {
-            $walletRefs .= $key . ':' . $value . ', ';
+        try {
+
+            $wallets = (new ModulesDashboardController())->createPartnerECommerceWallets($walletPreset);
+            if ($wallets->getData()->status) {
+                $setup_wallets = $wallets->getData()->data;
+                $walletRefs = '';
+                foreach ($setup_wallets as $key => $value) {
+                    $walletRefs .= $key . ':' . $value . ', ';
+                }
+                $walletRefs = rtrim($walletRefs, ', ');
+                $this->info('Wallet References: ' . $walletRefs);
+            } else {
+                $this->error('Issue Setting up eCommerce Partner Wallets: ' . $wallets->getData()->message);
+            }
+
+        } catch (\Exception $e) {
+            $this->error('Error Setting up eCommerce Partner Wallets: ' . $e->getMessage());
+            //throw new \RuntimeException($e->getMessage());
         }
-        $walletRefs = rtrim($walletRefs, ', ');
-        $this->info('Wallet References: ' . $walletRefs);
+
+        
 
     }
 
