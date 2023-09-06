@@ -1409,7 +1409,7 @@ class ModulesDashboardController extends Controller {
             if (!isset($company_data["global_partner_settings"]) || empty($company_data["global_partner_settings"]) ) {
                 $company_data["global_partner_settings"] = [
                     "ecommerce" => [
-                        "transfer_fees" => [
+                        "transaction_fees" => [
                             "total" => 10,
                             "partner" => 2.5,
                             "dorcas" => 7.5
