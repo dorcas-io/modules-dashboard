@@ -41,7 +41,8 @@ class Checklists {
 
         $company_data = (array) $company->extra_data;
 
-        return !empty($locations) && !empty($company_data['location']);
+        //return !empty($locations) && !empty($company_data['location']);
+        return !empty($locations);
     }
 
     public function checkShippingCosts() : bool
