@@ -383,8 +383,12 @@ class ModulesDashboardController extends Controller {
 
         $checklists = self::processChecklists($request, $sdk, $user_dashboard_status);
 
+
         $count = collect($checklists)->count();
         $done = collect($checklists)->where('verification', true)->count();
+
+        Cache::put('checklist_score_'.auth()->user()->id,   round( ($done / $count) * 100 ));
+
 
         $this->data['checklists'] = [
             'checklists' => $checklists,
