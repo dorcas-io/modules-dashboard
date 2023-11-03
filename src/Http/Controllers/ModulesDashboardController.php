@@ -12,6 +12,7 @@ use Hostville\Dorcas\Sdk;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\ServerException;
 use Dorcas\ModulesAssistant\Http\Controllers\ModulesAssistantController as Assistant;
 use App\Http\Controllers\HubController as HubControl;
@@ -32,6 +33,8 @@ class ModulesDashboardController extends Controller {
         'services' => ['icon' => 'domain', 'bg' => 'bg-green'],
         'teams' => ['icon' => 'group', 'bg' => 'bg-green']
     ];
+
+    private $setupUIComponents;
     
     /** @var array  */
 
@@ -47,8 +50,8 @@ class ModulesDashboardController extends Controller {
         //['name' => 'Addons', 'base' => true, 'id' => 'addons', 'enabled' => true, 'is_readonly' => true, 'path' => ['mda', 'mit'], 'children' => []],
         ['name' => 'Settings', 'base' => true, 'id' => 'settings', 'enabled' => true, 'is_readonly' => true, 'path' => 'mse', 'children' => []],
         ['name' => 'Services', 'base' => true, 'id' => 'services', 'enabled' => true, 'is_readonly' => true, 'path' => ['mps', 'mpp', 'map'], 'children' => []],
-        ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => true, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
-        ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => true, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
+        ['name' => 'Analytics', 'base' => true, 'id' => 'analytics', 'enabled' => false, 'is_readonly' => true, 'path' => ['man'], 'children' => []],
+        ['name' => 'Vendors', 'base' => true, 'id' => 'vendors', 'enabled' => false, 'is_readonly' => true, 'path' => 'mvd', 'children' => []],
     ];
 
     const GETTING_STARTED_CHECKLISTS = [
@@ -113,6 +116,16 @@ class ModulesDashboardController extends Controller {
             'header' => ['title' => config('modules-dashboard.title')],
             'selectedMenu' => 'modules-dashboard'
         ];
+
+        $readOnlyModules = env('SETTINGS_MODULES_READONLY', true);
+
+        $this->setupUIComponents = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($readOnlyModules) {
+            if ($field['enabled']) {
+                $field['is_readonly'] = $readOnlyModules; //update readonly from env (onnly if its enabled for use)
+            }
+            return $field;
+        })->toArray();
+
     }
 
     public function business(Request $request, Sdk $sdk)
@@ -147,7 +160,7 @@ class ModulesDashboardController extends Controller {
             $currentUiSetup = $configurations['ui_setup'] ?? [];
 
 
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
@@ -172,7 +185,9 @@ class ModulesDashboardController extends Controller {
             }
         }
 
-        if (!$this->data['isConfigured']) {
+        $isConfigured = $this->data['isConfigured'];
+
+        if (!$isConfigured) {
             $autosetup = env('SETTINGS_DASHBOARD_AUTOSETUP', 'no');
             if ( $autosetup  == 'yes' ) {
                 $this->auto_setup($request, $sdk);
@@ -181,6 +196,35 @@ class ModulesDashboardController extends Controller {
             }
         }
         # first time users
+
+
+        $dorcasEdition = env("DORCAS_EDITION", "business");
+
+        // If this is multi-tenant and its an admin login, lets see if we should use an admin switchboard
+        if ( $dorcasEdition != "business" && $dorcasUser->is_partner) {
+
+            $viewAsSME = !empty($request->has('viewAsSME')) || !empty($request->session()->get('viewAsSME', null)) ? true : false;
+            # check if a SME switch was requested via query
+
+            if ($viewAsSME) {
+
+                if (empty($request->session()->get('viewAsSME', null))) {
+                    $request->session()->put('viewAsSME', true);
+                }
+                # save viewAsSME preference
+            } else {
+
+                $this->data['page'] = ['title' => 'Administrator Dashboard'];
+                $this->data['header'] = ['title' => 'Administrator Dashboard'];
+
+                return view('modules-dashboard::admin', $this->data);
+
+            }
+
+        }
+
+
+        // PROCESS SME VIEWS AS BUSINESS OR PROFESSIONAL
 
         $daysAgo = Carbon::now()->subDays(config('hub.dashboard.graph.days_ago'));
 
@@ -329,15 +373,6 @@ class ModulesDashboardController extends Controller {
 
             $response = $sdk->createCompanyService()->send('GET', ['status']);
 
-
-//           $response = $sdk->createCompanyService()->send('GET',['fetch-bridge-token']);
-//
-//
-//           $this->data['partner_id'] = $response->getData();
-
-
-//            # get the company status
-
             //$summary_aspects = ['employees', 'customers', 'orders'];
             $summary_aspects = ['customers', 'orders'];
 
@@ -441,12 +476,12 @@ class ModulesDashboardController extends Controller {
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
@@ -519,11 +554,11 @@ class ModulesDashboardController extends Controller {
         $business_state = "";
         $currency = env('SETTINGS_CURRENCY', 'NGN');
 
-        $selected_apps = [
-            "customers",
-            "ecommerce",
-            "sales"
-        ];
+        // $selected_apps = [
+        //     "customers",
+        //     "ecommerce",
+        //     "sales"
+        // ];
 
         /**
         * a lot can be controlled at self::SETUP_UI_COMPONENTS
@@ -531,20 +566,29 @@ class ModulesDashboardController extends Controller {
         * enbled means not showig
         */
 
-        $selected_apps = ["customers", "ecommerce", "sales"];
+        // Incorporate env module settings if any
+        $env_modules = explode(",", env('SETTINGS_MODULES_LIST', ""));
+
+        $selected_apps = is_array($env_modules) && count($env_modules) > 0 ? $env_modules : ["customers", "ecommerce", "sales"];
         # choose which modules to activate
+
+        // add default modules
+        $selected_apps = array_merge($selected_apps, ['dashboard', 'settings']);
+
+        // Update SETUP_UI_COMPONENTS
+        $SETUP_UI_COMPONENTS = $this->setupUIComponents; // self::SETUP_UI_COMPONENTS;
 
 
         $configurations = (array) $company->extra_data;
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect()->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($SETUP_UI_COMPONENTS)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
@@ -624,18 +668,18 @@ class ModulesDashboardController extends Controller {
         $this->data['isConfigured'] = !empty($configurations['ui_setup']);
         
         
-        $baseFeatures = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $baseFeatures = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['base']);
         })->pluck('id');
         # get the base values
         
         
-        $readonlyExtend = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyExtend = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && !empty($field['enabled']);
         })->pluck('id');
         # get the enabled-readonly values
         
-        $readonlyRemovals = collect(self::SETUP_UI_COMPONENTS)->filter(function ($field) {
+        $readonlyRemovals = collect($this->setupUIComponents)->filter(function ($field) {
             return !empty($field['is_readonly']) && empty($field['enabled']);
         })->pluck('id');
         # get the disabled-readonly values
@@ -751,6 +795,28 @@ class ModulesDashboardController extends Controller {
             }
         }
         return $checklists;
+    }
+
+    /**
+     * @param Request $request
+     * @param Sdk $sdk
+     *
+     * @return array
+     */
+    public static function readinessChecks(Request $request, Sdk $sdk, $company=null): array
+    {
+        $checks = [];
+        //(new Checklists())->checkBankAccounts()
+        $c = new Checklists($request, $sdk, $company);
+        $checks = [
+            "products" => $c->checkProducts(),
+            "store" => $c->checkOnlineStore(),
+            "address" => $c->checkPickupAddress(),
+            "bank" => $c->checkBankAccounts(),
+            "shipping" => $c->checkShippingCosts(),
+        ];
+
+        return $checks;
     }
 
 
@@ -961,7 +1027,7 @@ class ModulesDashboardController extends Controller {
             # check if the UI has been configured
             $currentUiSetup = $configurations['ui_setup'] ?? [];
 
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
@@ -1030,7 +1096,7 @@ class ModulesDashboardController extends Controller {
             }
             # check if the UI has been configured
             $currentUiSetup = $configurations['ui_setup'] ?? [];
-            $this->data['setupUiFields'] = collect(self::SETUP_UI_COMPONENTS)->map(function ($field) use ($currentUiSetup) {
+            $this->data['setupUiFields'] = collect($this->setupUIComponents)->map(function ($field) use ($currentUiSetup) {
                 if (!empty($field['is_readonly'])) {
                     return $field;
                 }
@@ -1107,6 +1173,79 @@ class ModulesDashboardController extends Controller {
             }
         }
         return false;
+    }
+
+    /**
+     * @param Request $request
+     * @param Sdk     $sdk
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function customization_setup(Request $request, Sdk $sdk)
+    {
+
+        $setup_actions = ['setup_products', 'setup_categories'];
+
+        $this->validate($request, [
+            'action' => 'required|in:' . implode(',', $setup_actions),
+        ]);
+
+        $action = $request->query('action');
+
+        # validate the request
+        try {
+
+            $params = [
+                'arguments' => [],
+                'info' => []
+            ];
+
+            switch($action) {
+
+                case 'setup_products':
+
+                    $request->query->set('command', "db:seed");
+
+                    $params['arguments'] = [
+                        '--force' => true,
+                        '--class' => 'AssistantProductSeeder',
+                    ];
+                    $params['info'] = [
+                        'command_name' => 'Product Setup Command',
+                    ];
+                break;
+
+            }
+            
+            $command = (new Assistant())->commandAssistant($request, $params);
+
+            if ($command["status"]) {
+                $response = (tabler_ui_html_response([$command["message"]]))->setType(UiResponse::TYPE_SUCCESS);
+            } else {
+                $response = (tabler_ui_html_response([$command["message"]]))->setType(UiResponse::TYPE_ERROR);
+            }
+
+            
+
+        } catch (\Exception $e) {
+
+            // Handle different types of exceptions here, including validation exceptions
+            if ($e instanceof ValidationException) {
+                // Handle validation exceptions
+                // $errors = $e->errors();
+                // return response()->json([
+                //     'error' => 'Validation error occurred.',
+                //     'errors' => $errors,
+                // ], 422);
+                $response = (tabler_ui_html_response(['Invalid customization type. The permitted values are: ' . implode(', ', $setup_actions)]))->setType(UiResponse::TYPE_ERROR);
+            } else {
+                // Handle other types of exceptions
+                $response = (tabler_ui_html_response([$e->getMessage()]))->setType(UiResponse::TYPE_ERROR);
+            }
+            
+        }
+        return redirect(route('welcome-setup'))->with('UiResponse', $response);
     }
 
 

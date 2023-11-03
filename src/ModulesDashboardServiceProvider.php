@@ -2,6 +2,7 @@
 
 namespace Dorcas\ModulesDashboard;
 use Illuminate\Support\ServiceProvider;
+use Dorcas\ModulesDashboard\Classes\PartnerSetupCommand;
 
 class ModulesDashboardServiceProvider extends ServiceProvider {
 
@@ -15,6 +16,12 @@ class ModulesDashboardServiceProvider extends ServiceProvider {
 		/*$this->publishes([
 			__DIR__.'/assets' => public_path('vendor/modules-dashboard')
 		], 'dorcas-modules');*/
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PartnerSetupCommand::class,
+            ]);
+        }
 	}
 
 	public function register()

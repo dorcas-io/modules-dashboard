@@ -14,6 +14,8 @@ Route::group(['namespace' => 'Dorcas\ModulesDashboard\Http\Controllers', 'prefix
 
 	Route::post('/process-dashboard', 'ModulesDashboardController@processDashboard')->name('process-dashboard');
 
+	Route::get('/customization-setup', 'ModulesDashboardController@customization_setup')->name('customization-setup-post');
+
 });
 
 ?>

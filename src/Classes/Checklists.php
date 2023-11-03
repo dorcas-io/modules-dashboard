@@ -41,7 +41,8 @@ class Checklists {
 
         $company_data = (array) $company->extra_data;
 
-        return !empty($locations) && !empty($company_data['location']);
+        //return !empty($locations) && !empty($company_data['location']);
+        return !empty($locations);
     }
 
     public function checkShippingCosts() : bool
@@ -111,8 +112,19 @@ class Checklists {
 
     public function checkBankAccounts() : bool
     {
-        $check = $this->controller->getBankAccounts($this->sdk);
-        $bank_accounts = !empty($check) ? $check : [];
+
+        if (empty(auth()->user())) {
+            $companyUsers = $this->company->users;
+            $bank_accounts = $companyUsers["data"][0]["bank_accounts"];
+        } else {
+            $check = $this->controller->getBankAccounts($this->sdk);
+            $bank_accounts = !empty($check) ? $check : [];
+        }
+
+        
+
+
+
         return count($bank_accounts) > 0;
     }
 

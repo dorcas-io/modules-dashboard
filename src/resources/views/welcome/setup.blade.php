@@ -143,7 +143,7 @@
                     <div class="row mt-4"> <!--  d-none -->
                         <div class="col-sm-12 col-md-12">
                             <p class="text-uppercase">
-                                Select all <strong>Hub modules</strong> would you like to activate
+                                Turn functionality <strong> modules</strong> on/off
                                 <hr>
                             </p>
                         </div>
@@ -161,10 +161,47 @@
                     </div>
 
 				</form>
+
+                <div class="row mt-4"> <!--  d-none -->
+                    <button type="submit" form="form-welcome-setup" class="btn btn-primary btn-block" name="action" :class="{'btn-loading':submittingSetup}" value="save_preferences">Save Preferences</button>
+                </div>
+                
+                <hr>
+
+				<form id="form-customization-setup" action="{{ route('customization-setup-post') }}" method="get"> <!-- v-on:submit.prevent="submitWelcomeSetup"-->
+                    @csrf
+                    <div class="row mt-4"> <!--  d-none -->
+                        <div class="col-sm-12 col-md-12">
+                            <p class="text-uppercase">
+                                Setup additional customization
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+
+                            <div class="card">
+                                <div class="card-status bg-primary"></div>
+                                <div class="card-header">
+                                    <h3 class="card-title">Sample Products</h3>
+                                        <div class="card-options">
+                                            .
+                                        </div>
+                                </div>
+                                <div class="card-body">
+                                    This will create sample products in your inventory. You are free to modify and/or remove them
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" form="form-customization-setup" class="btn btn-primary btn-block" name="action" value="setup_products">Setup Products</button>
+                                </div>
+                            </div>
+                        </div>
+
+                </form>
+
 				@include('modules-dashboard::modals.welcome-video')
             </div>
             <div class="card-footer">
-	            <button type="submit" form="form-welcome-setup" class="btn btn-primary btn-block" name="action" :class="{'btn-loading':submittingSetup}" value="save_preferences">Save Preferences</button>
+	            
             </div>
         </div>
 
