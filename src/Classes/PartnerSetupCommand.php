@@ -8,7 +8,7 @@ use Dorcas\ModulesDashboard\Http\Controllers\PartnerSetupController;
 
 class PartnerSetupCommand extends Command
 {
-    protected $signature = 'dorcas:setup-partner {--wallet-preset=}';
+    protected $signature = 'dorcas:setup-partner {--wallet-preset=} {--vas-products=}';
     protected $description = 'Command to Setup Partner details from the command line';
 
     /**
